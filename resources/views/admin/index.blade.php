@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Kaiadmin - Bootstrap 5 Admin Dashboard</title>
+    <title>UPTD Wiyung</title>
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
@@ -38,10 +38,12 @@
     <link rel="stylesheet" href="{{ asset('templetes/kaiadmin-lite/assets/css/plugins.min.css')}}" />
     <link rel="stylesheet" href="{{ asset('templetes/kaiadmin-lite/assets/css/kaiadmin.min.css')}}" />
 
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('templetes/kaiadmin-lite/assets/css/demo.css')}}" />
   </head>
   <body>
+    
     <div class="wrapper">
       <!-- Sidebar -->
       <div class="sidebar sidebar-style-2" data-background-color="dark">
@@ -68,7 +70,7 @@
         <div class="sidebar-wrapper scrollbar scrollbar-inner">
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
-              <li class="nav-item">
+              {{-- <li class="nav-item">
                 <a
                   data-bs-toggle="collapse"
                   href="#dashboard"
@@ -88,14 +90,14 @@
                     </li>
                   </ul>
                 </div>
-              </li>
+              </li> --}}
               <li class="nav-section">
                 <span class="sidebar-mini-icon">
                   <i class="fa fa-ellipsis-h"></i>
                 </span>
-                <h4 class="text-section">Components</h4>
+                <h4 class="text-section">Main Menu</h4>
               </li>
-              <li class="nav-item">
+              {{-- <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
                   <i class="fas fa-layer-group"></i>
                   <p>Base</p>
@@ -171,6 +173,14 @@
                     </li>
                   </ul>
                 </div>
+              </li> --}}
+              
+              <li class="nav-item">
+                <a href="{{ route('berita_acara') }}">
+                  <i class="fa fa-desktop"></i>
+                  <p>Berita Acara</p>
+                  {{-- <span class="badge badge-success">4</span> --}}
+                </a>
               </li>
             </ul>
           </div>
@@ -185,7 +195,7 @@
             <div class="logo-header" data-background-color="dark">
               <a href="index.html" class="logo">
                 <img
-                  src="assets/img/kaiadmin/logo_light.svg"
+                  src="{{ asset('templetes/kaiadmin-lite/assets/img/kaiadmin/logo_light.svg')}}"
                   alt="navbar brand"
                   class="navbar-brand"
                   height="20"
@@ -228,7 +238,7 @@
               </nav>
 
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                <li
+                {{-- <li
                   class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none"
                 >
                   <a
@@ -283,7 +293,7 @@
                           <a href="#">
                             <div class="notif-img">
                               <img
-                                src="assets/img/jm_denis.jpg"
+                                src="{{ asset('templetes/kaiadmin-lite/assets/img/jm_denis.jpg')}}"
                                 alt="Img Profile"
                               />
                             </div>
@@ -296,7 +306,7 @@
                           <a href="#">
                             <div class="notif-img">
                               <img
-                                src="assets/img/chadengle.jpg"
+                                src="{{ asset('templetes/kaiadmin-lite/assets/img/chadengle.jpg')}}"
                                 alt="Img Profile"
                               />
                             </div>
@@ -309,7 +319,7 @@
                           <a href="#">
                             <div class="notif-img">
                               <img
-                                src="assets/img/mlane.jpg"
+                                src="{{ asset('templetes/kaiadmin-lite/assets/img/mlane.jpg')}}"
                                 alt="Img Profile"
                               />
                             </div>
@@ -324,7 +334,7 @@
                           <a href="#">
                             <div class="notif-img">
                               <img
-                                src="assets/img/talha.jpg"
+                                src="{{ asset('templetes/kaiadmin-lite/assets/img/talha.jpg')}}"
                                 alt="Img Profile"
                               />
                             </div>
@@ -499,7 +509,7 @@
                       </div>
                     </div>
                   </div>
-                </li>
+                </li> --}}
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
                   <a
@@ -510,7 +520,7 @@
                   >
                     <div class="avatar-sm">
                       <img
-                        src="assets/img/profile.jpg"
+                        src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg')}}"
                         alt="..."
                         class="avatar-img rounded-circle"
                       />
@@ -526,7 +536,7 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="assets/img/profile.jpg"
+                              src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg')}}"
                               alt="image profile"
                               class="avatar-img rounded"
                             />
@@ -550,7 +560,12 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Account Setting</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Logout</a>
+                        
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+
                       </li>
                     </div>
                   </ul>
@@ -563,7 +578,7 @@
 
         <div class="container">
           <div class="page-inner">
-            <div
+            {{-- <div
               class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
             >
               <div>
@@ -574,7 +589,12 @@
                 <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
                 <a href="#" class="btn btn-primary btn-round">Add Customer</a>
               </div>
-            </div>
+            </div> --}}
+
+                @if (Route::current()->getName() == '')
+                  
+                @endif
+                @yield('content')
           </div>
         </div>
 
@@ -622,5 +642,19 @@
     <!-- Kaiadmin JS -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/kaiadmin.min.js')}}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+    <script>
+      $(function () {
+        $('#summernote').summernote({
+          height: 200,
+          toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['table']],
+            ['view', ['codeview']]
+          ]
+        });
+      });
+    </script>
   </body>
 </html>
