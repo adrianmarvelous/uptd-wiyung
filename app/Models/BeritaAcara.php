@@ -15,4 +15,17 @@ class BeritaAcara extends Model
         'pegawai2',
         'ttd_wajib_pajak',
     ];
+
+    public function wajibPajak()
+    {
+        return $this->hasOne(WajibPajak::class,'id','id_wajib_pajak');
+    }
+    public function pegawai1()
+    {
+        return $this->hasOne(Pegawai::class,'id','pegawai1');
+    }
+    public function pegawai2()
+    {
+        return $this->hasOne(Pegawai::class,'id','pegawai2');
+    }
 }
