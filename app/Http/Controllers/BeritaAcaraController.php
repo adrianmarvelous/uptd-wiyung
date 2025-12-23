@@ -16,7 +16,7 @@ class BeritaAcaraController extends Controller
 {
     public function index()
     {
-        $data = BeritaAcara::with(['wajibPajak', 'pegawai1', 'pegawai2'])->get();
+        $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])->get();
         // dd($data);
         return view('admin.berita_acara.index',compact('data'));
     }

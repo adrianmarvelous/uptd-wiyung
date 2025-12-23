@@ -2,7 +2,7 @@
 
 
 @section('content')
-    <div class="card">
+    <div class="card p-3">
         <h1>Berita Acara</h1>
         <div class="d-flex justify-content-end">
             <!-- Button trigger modal -->
@@ -52,8 +52,8 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
+            <table class="table table-striped table-bordered">
+                <thead class="table-primary">
                     <tr>
                         <th>No</th>
                         <th>NOP</th>
@@ -67,17 +67,14 @@
                 </thead>
                 <tbody>
                     @foreach ($data as $item)
-                    @php
-                        dd($item->pegawai1)
-                    @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->wajibPajak->nop }}</td>
                             <td>{{ $item->wajibPajak->nama }}</td>
                             <td>{{ $item->wajibPajak->alamat }}</td>
-                            <td>{{ $item->narasi }}</td>
-                            <td>{{ $item->pegawai1 ? $item->pegawai1->nama_pegawai : '-' }}</td>
-                            <td>{{ $item->pegawai2 ? $item->pegawai2->nama_pegawai : '-' }}</td>
+                            <td>{!! $item->narasi !!}</td>
+                            <td>{{ $item->pegawai1 ? $item->pegawai_1->nama_pegawai : '-' }}</td>
+                            <td>{{ $item->pegawai2 ? $item->pegawai_2->nama_pegawai : '-' }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') }}</td>
                         </tr>
                     @endforeach

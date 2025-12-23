@@ -20,11 +20,11 @@ class BeritaAcara extends Model
     {
         return $this->hasOne(WajibPajak::class,'id','id_wajib_pajak');
     }
-    public function pegawai1()
+    public function pegawai_1()
     {
         return $this->hasOne(Pegawai::class,'id','pegawai1');
     }
-    public function pegawai2()
+    public function pegawai_2()
     {
         return $this->hasOne(Pegawai::class,'id','pegawai2');
     }
