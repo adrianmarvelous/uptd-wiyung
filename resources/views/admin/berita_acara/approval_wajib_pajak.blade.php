@@ -2,15 +2,6 @@
 
 
 @section('content')
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <h1>Buat Berita Acara</h1>
     <div class="card">
@@ -45,6 +36,16 @@
                     </div>
                     <div class="col-lg-10">
                         <p>{{ $alamat }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-2 font-weight-bold">
+                        <strong>
+                            <p>Nomer Whatsapp</p>
+                        </strong>
+                    </div>
+                    <div class="col-lg-10">
+                        <p>{{ $telp }}</p>
                     </div>
                 </div>
                 <p>{!! $narasi !!}</p>
@@ -87,6 +88,7 @@
                     <input type="hidden" name="nop" value="{{ $nop }}">
                     <input type="hidden" name="nama" value="{{ $nama }}">
                     <input type="hidden" name="alamat" value="{{ $alamat }}">
+                    <input type="hidden" name="telp" value="{{ $telp }}">
                     <input type="hidden" name="narasi" value="{{ $narasi }}">
                     <input type="hidden" name="pegawai1" value="{{ $pegawai1->id }}">
                     <input type="hidden" name="pegawai2" value="{{ $pegawai2->id ?? null }}">

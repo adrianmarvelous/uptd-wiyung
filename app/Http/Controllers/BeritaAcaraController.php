@@ -45,11 +45,21 @@ class BeritaAcaraController extends Controller
             'nama' => ['required', 'string', 'max:255', new SafeInput],
             'alamat' => ['required', 'string', 'max:255', new SafeInput],
         ]);
+
+
         $nop = $validated['nop'];
         $nama = $validated['nama'];
         $alamat = $validated['alamat'];
 
-        $pegawai = Pegawai::all();
+        $wajibPajak = WajibPajak::where('nop',$nop)->first();
+        if (!$wajibPajak) {
+            return back()->withErrors([
+                'nop' => 'Wajib Pajak tidak ditemukan'
+            ])->withInput();
+        }
+
+        $pegawai = Pegawai::orderBy('nama_pegawai', 'asc')->get();
+
 
         return view('admin.berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai'));
     }
@@ -60,6 +70,7 @@ class BeritaAcaraController extends Controller
             'nop' => ['required', 'string', 'max:255', new SafeInput],
             'nama' => ['required', 'string', 'max:255', new SafeInput],
             'alamat' => ['required', 'string', 'max:255', new SafeInput],
+            'telp' => ['required', 'string', 'max:255', new SafeInput],
             'narasi' => ['required', 'string', new SafeInput],
             'pegawai1' => ['required', 'integer'],
             'pegawai2' => ['nullable', 'integer'],
@@ -68,6 +79,7 @@ class BeritaAcaraController extends Controller
         $nop = $validated['nop'];
         $nama = $validated['nama'];
         $alamat = $validated['alamat'];
+        $telp = $validated['telp'];
         $narasi = $validated['narasi'];
         $pegawai1_id = $validated['pegawai1'];
         if (isset($validated['pegawai2'])) {
@@ -82,7 +94,7 @@ class BeritaAcaraController extends Controller
             $pegawai2 = null;
         }
 
-        return view('admin.berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'narasi', 'pegawai1', 'pegawai2'));
+        return view('admin.berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat','telp', 'narasi', 'pegawai1', 'pegawai2'));
     }
 
 
@@ -95,12 +107,12 @@ class BeritaAcaraController extends Controller
             'nop' => ['required', 'string', 'max:255', new SafeInput],
             'nama' => ['required', 'string', 'max:255', new SafeInput],
             'alamat' => ['required', 'string', 'max:255', new SafeInput],
+            'telp' => ['required', 'string', 'max:255', new SafeInput],
             'narasi' => ['required', 'string', new SafeInput],
             'ttd_wajib_pajak' => ['required', 'string'],
             'pegawai1' => ['required', 'integer'],
             'pegawai2' => ['nullable', 'integer'],
         ]);
-
         // ===============================
         // AMBIL DATA WAJIB PAJAK
         // ===============================
@@ -147,6 +159,7 @@ class BeritaAcaraController extends Controller
         try {
             BeritaAcara::create([
                 'id_wajib_pajak'  => $wajibPajak->id,
+                'telp'            => $validated['telp'],
                 'narasi'          => $validated['narasi'],
                 'pegawai1'        => $validated['pegawai1'],
                 'pegawai2'        => $validated['pegawai2'] ?? null,

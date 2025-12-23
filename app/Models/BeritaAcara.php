@@ -10,6 +10,7 @@ class BeritaAcara extends Model
     
     protected $fillable = [
         'id_wajib_pajak',
+        'telp',
         'narasi',
         'pegawai1',
         'pegawai2',

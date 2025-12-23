@@ -1,58 +1,146 @@
 @extends('admin.index')
 
-
 @section('content')
+    <style>
+        @media (max-width: 768px) {
+
+            table thead {
+                display: none;
+            }
+
+            table {
+                border-collapse: separate !important;
+                border-spacing: 0;
+            }
+
+            /* CARD */
+            table tr {
+                display: block;
+                position: relative;
+                margin-bottom: 1rem;
+                /* padding: 2.8rem 0.75rem 0.75rem; */
+                border: 1px solid #75a1ff;
+                /* border-radius: 12px; */
+                background: #75a1ff;
+            }
+
+            table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 8px;
+                border: 1px solid #2b2b2b;
+                color: #e5e5e5;
+            }
+
+            table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #9ca3af;
+            }
+
+            /* ===== AKSI BUTTON (MENYATU) ===== */
+            td.aksi-cell {
+                /* position: absolute;
+            top: 8px;
+            right: 8px; */
+                border: none !important;
+                padding: 0;
+                background: transparent;
+                z-index: 10;
+            }
+
+            td.aksi-cell::before {
+                content: "";
+            }
+
+            td.aksi-cell .aksi-btn {
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: none;
+                /* 🔑 menyatu */
+            }
+
+            td.aksi-cell .aksi-btn:hover,
+            td.aksi-cell .aksi-btn:active {
+                background: #2f2f2f;
+            }
+
+            td.aksi-cell .aksi-btn i {
+                font-size: 1.2rem;
+            }
+
+            /* sembunyikan kolom desktop */
+            .d-md-table-cell {
+                display: none !important;
+            }
+        }
+    </style>
+
     <div class="card p-3">
         <h1>Berita Acara</h1>
+
         <div class="d-flex justify-content-end">
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Buat Berita Acara
             </button>
+        </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title fw-bold" id="exampleModalLabel">Berita Acara Baru</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                {{-- <span aria-hidden="true">&times;</span> --}}
-                            </button>
-                        </div>
-                        <form action="{{ route('berita_acara.create') }}" method="POST">
-                            @csrf
-                            <div class="modal-body">
-                                <label>Cari NOP</label>
-                                <input type="text" class="form-control" name="nop" id="nop" list="list-nop">
-
-                                <datalist id="list-nop"></datalist>
-
-                                <label class="mt-3">Cari Nama</label>
-                                <input type="text" class="form-control" name="nama" id="nama" list="list-nama">
-
-                                <datalist id="list-nama"></datalist>
-
-                                <label class="mt-3">Cari Alamat</label>
-                                <input type="text" class="form-control" name="alamat" id="alamat" list="list-alamat">
-
-                                <datalist id="list-alamat"></datalist>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    Tutup
-                                </button>
-                                <button type="submit" class="btn btn-primary">Selanjutnya</button>
-                            </div>
-                        </form>
+        <!-- MODAL -->
+        <div class="modal fade" id="exampleModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">Berita Acara Baru</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
+
+                    <form action="{{ route('berita_acara.create') }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+
+                            {{-- NOP --}}
+                            <label>NOP</label>
+                            <div class="position-relative mb-3">
+                                <input type="text" class="form-control search-input" id="nop" name="nop"
+                                    placeholder="Cari NOP" autocomplete="off">
+                                <div class="dropdown-list list-group d-none"></div>
+                            </div>
+
+                            {{-- Nama --}}
+                            <label>Nama</label>
+                            <div class="position-relative mb-3">
+                                <input type="text" class="form-control search-input" id="nama" name="nama"
+                                    placeholder="Cari Nama" autocomplete="off">
+                                <div class="dropdown-list list-group d-none"></div>
+                            </div>
+
+                            {{-- Alamat --}}
+                            <label>Alamat</label>
+                            <div class="position-relative">
+                                <input type="text" class="form-control search-input" id="alamat" name="alamat"
+                                    placeholder="Cari Alamat" autocomplete="off">
+                                <div class="dropdown-list list-group d-none"></div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <button class="btn btn-primary">Selanjutnya</button>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>
+
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table class="table">
                 <thead class="table-primary">
                     <tr>
                         <th>No</th>
@@ -63,19 +151,65 @@
                         <th>Pegawai 1</th>
                         <th>Pegawai 2</th>
                         <th>Tanggal</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($data as $item)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->wajibPajak->nop }}</td>
-                            <td>{{ $item->wajibPajak->nama }}</td>
-                            <td>{{ $item->wajibPajak->alamat }}</td>
-                            <td>{!! $item->narasi !!}</td>
-                            <td>{{ $item->pegawai1 ? $item->pegawai_1->nama_pegawai : '-' }}</td>
-                            <td>{{ $item->pegawai2 ? $item->pegawai_2->nama_pegawai : '-' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') }}</td>
+
+                            {{-- AKSI (mobile only) --}}
+                            <td class="aksi-cell d-md-none">
+                                <div class="dropdown">
+                                    <button class="aksi-btn" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
+                                        <li><a class="dropdown-item" href="#"> <i class="bi bi-file-pdf"></i> PDF</a></li>
+                                        <li>
+                                            <form method="POST" action="#">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="dropdown-item text-danger"><i class="bi bi-trash"></i> Hapus</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+
+                            {{-- NO (desktop only) --}}
+                            <td class="d-none d-md-table-cell">
+                                {{ $loop->iteration }}
+                            </td>
+
+                            <td data-label="NOP">{{ $item->wajibPajak->nop }}</td>
+                            <td data-label="Nama">{{ $item->wajibPajak->nama }}</td>
+                            <td data-label="Alamat">{{ $item->wajibPajak->alamat }}</td>
+                            <td data-label="Narasi">{!! $item->narasi !!}</td>
+                            <td data-label="Pegawai 1">{{ $item->pegawai1 ? $item->pegawai_1->nama_pegawai : '-' }}</td>
+                            <td data-label="Pegawai 2">{{ $item->pegawai2 ? $item->pegawai_2->nama_pegawai : '-' }}</td>
+                            <td data-label="Tanggal">{{ $item->created_at->format('d-m-Y') }}</td>
+
+
+                            <td class="aksi-cell d-none d-md-table-cell">
+                                <div class="dropdown">
+                                    <button class="aksi-btn" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
+                                        <li><a class="dropdown-item" href="#"> <i class="bi bi-file-pdf"></i> PDF</a></li>
+                                        <li>
+                                            <form method="POST" action="#">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="dropdown-item text-danger"><i class="bi bi-trash"></i> Hapus</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -85,82 +219,83 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            let wpCache = [];
+            let cache = [];
 
-            async function fetchWajibPajak(keyword) {
-                if (keyword.length < 2) return;
+            async function searchWP(keyword) {
+                if (keyword.length < 2) return [];
 
-                try {
-                    const response = await fetch(
-                        `{{ route('berita_acara.search') }}?q=${encodeURIComponent(keyword)}`
-                    );
-
-                    const data = await response.json();
-                    wpCache = data;
-
-                    renderDatalist(data);
-                } catch (error) {
-                    console.error('Search error:', error);
-                }
+                const res = await fetch(`{{ route('berita_acara.search') }}?q=${encodeURIComponent(keyword)}`);
+                return await res.json();
             }
 
-            function renderDatalist(data) {
-                const listNop = document.getElementById('list-nop');
-                const listNama = document.getElementById('list-nama');
-                const listAlamat = document.getElementById('list-alamat');
+            function renderDropdown(container, data, field) {
+                container.innerHTML = '';
 
-                listNop.innerHTML = '';
-                listNama.innerHTML = '';
-                listAlamat.innerHTML = '';
+                if (!data.length) {
+                    container.classList.add('d-none');
+                    return;
+                }
 
                 data.forEach(item => {
-                    listNop.insertAdjacentHTML('beforeend',
-                        `<option value="${item.nop}"></option>`
-                    );
-                    listNama.insertAdjacentHTML('beforeend',
-                        `<option value="${item.nama}"></option>`
-                    );
-                    listAlamat.insertAdjacentHTML('beforeend',
-                        `<option value="${item.alamat}"></option>`
-                    );
+                    container.insertAdjacentHTML('beforeend', `
+                <button type="button"
+                    class="list-group-item list-group-item-action"
+                    data-nop="${item.nop}"
+                    data-nama="${item.nama}"
+                    data-alamat="${item.alamat}">
+                    ${item[field]}
+                </button>
+            `);
                 });
+
+                container.classList.remove('d-none');
             }
 
-            function autoFill(value) {
-                const wp = wpCache.find(item =>
-                    item.nop === value ||
-                    item.nama === value ||
-                    item.alamat === value
-                );
+            function fillAll(item) {
+                document.getElementById('nop').value = item.nop;
+                document.getElementById('nama').value = item.nama;
+                document.getElementById('alamat').value = item.alamat;
 
-                if (!wp) return;
-
-                document.getElementById('nop').value = wp.nop;
-                document.getElementById('nama').value = wp.nama;
-                document.getElementById('alamat').value = wp.alamat;
+                document.querySelectorAll('.dropdown-list').forEach(d => d.classList.add('d-none'));
             }
 
             function debounce(fn, delay = 400) {
-                let timeout;
+                let t;
                 return (...args) => {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => fn(...args), delay);
+                    clearTimeout(t);
+                    t = setTimeout(() => fn(...args), delay);
                 };
             }
 
-            const debouncedSearch = debounce(fetchWajibPajak);
+            document.querySelectorAll('.search-input').forEach(input => {
+                const dropdown = input.nextElementSibling;
+                const field = input.id; // nop | nama | alamat
 
-            ['nop', 'nama', 'alamat'].forEach(id => {
-                const input = document.getElementById(id);
-
-                input.addEventListener('input', e => {
-                    debouncedSearch(e.target.value);
-                    autoFill(e.target.value);
+                const debounced = debounce(async () => {
+                    const data = await searchWP(input.value);
+                    cache = data;
+                    renderDropdown(dropdown, data, field);
                 });
 
-                input.addEventListener('change', e => {
-                    autoFill(e.target.value);
+                input.addEventListener('input', debounced);
+
+                dropdown.addEventListener('click', e => {
+                    const btn = e.target.closest('.list-group-item');
+                    if (!btn) return;
+
+                    fillAll({
+                        nop: btn.dataset.nop,
+                        nama: btn.dataset.nama,
+                        alamat: btn.dataset.alamat
+                    });
                 });
+            });
+
+            document.addEventListener('click', e => {
+                if (!e.target.closest('.position-relative')) {
+                    document.querySelectorAll('.dropdown-list')
+                        .forEach(d => d.classList.add('d-none'));
+                }
             });
 
         });

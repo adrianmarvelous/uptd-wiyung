@@ -31,6 +31,14 @@
                         <p>{{ $alamat }}</p>
                     </div>
                 </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 font-weight-bold">
+                        <strong><p>Nomer Whatsapp</p></strong>
+                    </div>
+                    <div class="col-lg-10">
+                        <input type="number" name="telp" class="form-control" required>
+                    </div>
+                </div>
                 <textarea id="summernote" name="narasi"></textarea>
                 <div class="row mt-3">
                     <div class="col-lg-2 font-weight-bold">
