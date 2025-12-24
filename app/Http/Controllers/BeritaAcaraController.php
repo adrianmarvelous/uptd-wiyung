@@ -10,6 +10,8 @@ use App\Models\BeritaAcara;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Mpdf\Mpdf;
+use Carbon\Carbon;
 
 
 class BeritaAcaraController extends Controller
@@ -18,7 +20,7 @@ class BeritaAcaraController extends Controller
     {
         $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])->get();
         // dd($data);
-        return view('admin.berita_acara.index',compact('data'));
+        return view('admin.berita_acara.index', compact('data'));
     }
 
     public function search(Request $request)
@@ -51,7 +53,7 @@ class BeritaAcaraController extends Controller
         $nama = $validated['nama'];
         $alamat = $validated['alamat'];
 
-        $wajibPajak = WajibPajak::where('nop',$nop)->first();
+        $wajibPajak = WajibPajak::where('nop', $nop)->first();
         if (!$wajibPajak) {
             return back()->withErrors([
                 'nop' => 'Wajib Pajak tidak ditemukan'
@@ -94,7 +96,7 @@ class BeritaAcaraController extends Controller
             $pegawai2 = null;
         }
 
-        return view('admin.berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat','telp', 'narasi', 'pegawai1', 'pegawai2'));
+        return view('admin.berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'telp', 'narasi', 'pegawai1', 'pegawai2'));
     }
 
 
@@ -178,5 +180,38 @@ class BeritaAcaraController extends Controller
                 'error' => 'Gagal menyimpan Berita Acara: ' . $e->getMessage()
             ])->withInput();
         }
+    }
+
+    public function ba_pdf($id)
+    {
+        
+        Carbon::setLocale('id');
+        $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])
+            ->findOrFail($id);
+
+        // Render blade ke HTML
+        $html = view('admin.berita_acara.ba_pdf', compact('data'))->render();
+
+        // Init mPDF
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_top' => 15,
+            'margin_bottom' => 15,
+            'margin_left' => 15,
+            'margin_right' => 15,
+        ]);
+
+        // Optional header / footer
+        $mpdf->SetHeader('BERITA ACARA||{PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|BKPSDM Kota Surabaya|{PAGENO}');
+
+        // Write HTML ke PDF
+        $mpdf->WriteHTML($html);
+
+        // Tampilkan PDF di browser
+        return response(
+            $mpdf->Output('berita-acara.pdf', 'S')
+        )->header('Content-Type', 'application/pdf');
     }
 }

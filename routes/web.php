@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->group(function () 
     Route::post('/berita_acara/create', [BeritaAcaraController::class, 'create'])->name('berita_acara.create');
     Route::post('/berita_acara/approval_wajib_pajak', [BeritaAcaraController::class, 'approval_wajib_pajak'])->name('berita_acara.approval_wajib_pajak');
     Route::post('/berita_acara/store', [BeritaAcaraController::class, 'store'])->name('berita_acara.store');
+    Route::get('/berita_acara/ba_pdf/{id}', [BeritaAcaraController::class, 'ba_pdf'])->name('berita_acara.ba_pdf');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

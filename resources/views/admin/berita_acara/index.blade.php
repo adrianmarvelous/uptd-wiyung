@@ -165,8 +165,9 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="#"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
-                                        <li><a class="dropdown-item" href="#"> <i class="bi bi-file-pdf"></i> PDF</a></li>
+                                        <li><a class="dropdown-item"  href="https://wa.me/{{ $item->telp }}" target="_blank"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('berita_acara.ba_pdf', $item->id) }}" target="_blank"> <i class="bi bi-file-pdf"></i> PDF</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('berita_acara.ba_pdf', $item->id) }}" target="_blank"> <i class="bi bi-pen"></i> Edit</a></li>
                                         <li>
                                             <form method="POST" action="#">
                                                 @csrf
@@ -194,12 +195,13 @@
 
                             <td class="aksi-cell d-none d-md-table-cell">
                                 <div class="dropdown">
-                                    <button class="aksi-btn" data-bs-toggle="dropdown">
+                                    <button class="aksi-btn btn btn-primary" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="#"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
-                                        <li><a class="dropdown-item" href="#"> <i class="bi bi-file-pdf"></i> PDF</a></li>
+                                        <li><a class="dropdown-item" href="https://wa.me/{{ $item->telp }}" target="_blank"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('berita_acara.ba_pdf', $item->id) }}" target="_blank"> <i class="bi bi-file-pdf"></i> PDF</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('berita_acara.ba_pdf', $item->id) }}" target="_blank"> <i class="bi bi-pencil"></i> Edit</a></li>
                                         <li>
                                             <form method="POST" action="#">
                                                 @csrf
