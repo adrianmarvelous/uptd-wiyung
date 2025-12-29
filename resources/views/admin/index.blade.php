@@ -84,7 +84,7 @@
             <div class="sidebar-logo">
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
-                    <a href="index.html" class="logo text-white">
+                    <a href="" class="logo text-white">
                         UPTD Wiyung
                     </a>
                     <div class="nav-toggle">
@@ -601,7 +601,17 @@
               </div>
             </div> --}}
 
-                    @if (Route::current()->getName() == '')
+                    @if (Route::current()->getName() == 'dashboard')
+                    <div class="card p-3">
+                      <h1>Main Menu</h1>
+                      <div class="row p-3">
+                        <div class="col-lg-3 card shadow text-center btn btn-primary">
+                          <a href="{{ route('berita_acara') }}" class="text-white text-decoration-none">
+                              <h2 class="text-white">Berita Acara</h2>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
                     @endif
                     @yield('content')
                 </div>
