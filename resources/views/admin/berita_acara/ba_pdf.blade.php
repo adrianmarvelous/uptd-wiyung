@@ -123,7 +123,9 @@
         </tr>
 
         <tr>
-            <td style="text-align: center"></td>
+            <td style="text-align: center">
+                <img src="{{ public_path($data->ttd_wajib_pajak) }}" width="200">
+            </td>
             <td>
                 @if ($data->pegawai_2)
                     <div style="display:flex; justify-content:flex-end; gap:10px;">
@@ -134,7 +136,7 @@
             </td>
         </tr>
         <tr>
-            <td style="text-align: center"></td>
+            <td style="text-align: center">{{ $data->nama }}</td>
             <td>
                 @if ($data->pegawai_2)
                     NIP. {{ optional($data->pegawai_2)->nip_nik ?? '-' }}

@@ -1,7 +1,7 @@
 @extends('admin.index')
 
 @section('content')
-    <style>
+    {{-- <style>
         @media (max-width: 768px) {
 
             table thead {
@@ -79,7 +79,7 @@
                 display: none !important;
             }
         }
-    </style>
+    </style> --}}
 
     <div class="card p-3">
         <h1>Berita Acara</h1>
@@ -140,17 +140,17 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table">
+            <table class="table" id="basic-datatables">
                 <thead class="table-primary">
                     <tr>
-                        <th>No</th>
-                        <th>NOP</th>
+                        <th class="d-none d-md-table-cell">No</th>
+                        <th class="d-none d-md-table-cell">NOP</th>
                         <th>Wajib Pajak</th>
-                        <th>Alamat</th>
-                        <th>Narasi</th>
-                        <th>Pegawai 1</th>
-                        <th>Pegawai 2</th>
-                        <th>Tanggal</th>
+                        <th class="d-none d-md-table-cell">Alamat</th>
+                        <th class="d-none d-md-table-cell">Narasi</th>
+                        <th class="d-none d-md-table-cell">Pegawai 1</th>
+                        <th class="d-none d-md-table-cell">Pegawai 2</th>
+                        <th class="d-none d-md-table-cell">Tanggal</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -159,7 +159,7 @@
                         <tr>
 
                             {{-- AKSI (mobile only) --}}
-                            <td class="aksi-cell d-md-none">
+                            {{-- <td class="aksi-cell d-md-none">
                                 <div class="dropdown">
                                     <button class="aksi-btn" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -177,23 +177,23 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </td>
+                            </td> --}}
 
                             {{-- NO (desktop only) --}}
-                            <td class="d-none d-md-table-cell">
+                            <td  class="d-none d-md-table-cell">
                                 {{ $loop->iteration }}
                             </td>
 
-                            <td data-label="NOP">{{ $item->wajibPajak->nop }}</td>
+                            <td  class="d-none d-md-table-cell">{{ $item->wajibPajak->nop }}</td>
                             <td data-label="Nama">{{ $item->wajibPajak->nama }}</td>
-                            <td data-label="Alamat">{{ $item->wajibPajak->alamat }}</td>
-                            <td data-label="Narasi">{!! $item->narasi !!}</td>
-                            <td data-label="Pegawai 1">{{ $item->pegawai1 ? $item->pegawai_1->nama_pegawai : '-' }}</td>
-                            <td data-label="Pegawai 2">{{ $item->pegawai2 ? $item->pegawai_2->nama_pegawai : '-' }}</td>
-                            <td data-label="Tanggal">{{ $item->created_at->format('d-m-Y') }}</td>
+                            <td  class="d-none d-md-table-cell">{{ $item->wajibPajak->alamat }}</td>
+                            <td  class="d-none d-md-table-cell">{!! $item->narasi !!}</td>
+                            <td  class="d-none d-md-table-cell">{{ $item->pegawai1 ? $item->pegawai_1->nama_pegawai : '-' }}</td>
+                            <td  class="d-none d-md-table-cell">{{ $item->pegawai2 ? $item->pegawai_2->nama_pegawai : '-' }}</td>
+                            <td  class="d-none d-md-table-cell">{{ $item->created_at->format('d-m-Y') }}</td>
 
 
-                            <td class="aksi-cell d-none d-md-table-cell">
+                            <td class="aksi-cell">
                                 <div class="dropdown">
                                     <button class="aksi-btn btn btn-primary" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>

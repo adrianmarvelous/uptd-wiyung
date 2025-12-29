@@ -51,7 +51,7 @@
                 <p>{!! $narasi !!}</p>
                 <div class="row mt-3">
                     <div class="col-lg-2 font-weight-bold">
-                        <p>Petugas 1</p>
+                        <strong><p>Petugas 1</p></strong> 
                     </div>
                     <div class="col-lg-10">
                         <p>{{ $pegawai1->nama_pegawai }}</p>
@@ -60,7 +60,7 @@
                 @isset($pegawai2)
                     <div class="row mt-3">
                         <div class="col-lg-2 font-weight-bold">
-                            <p>Petugas 2</p>
+                            <strong> <p>Petugas 2</p></strong> 
                         </div>
                         <div class="col-lg-10">
                             <p>{{ $pegawai2->nama_pegawai }}</p>
@@ -83,10 +83,21 @@
                         </button>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-lg-2 font-weight-bold">
+                        <strong>
+                            <p>Nama Responden</p>
+                        </strong>
+                    </div>
+                    <div class="col-lg-10">
+                        <p>{{ $nama_responden }}</p>
+                    </div>
+                </div>
 
                 <div class="d-flex justify-content-end mt-3">
                     <input type="hidden" name="nop" value="{{ $nop }}">
                     <input type="hidden" name="nama" value="{{ $nama }}">
+                    <input type="hidden" name="nama_responden" value="{{ $nama_responden }}">
                     <input type="hidden" name="alamat" value="{{ $alamat }}">
                     <input type="hidden" name="telp" value="{{ $telp }}">
                     <input type="hidden" name="narasi" value="{{ $narasi }}">

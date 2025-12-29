@@ -9,6 +9,7 @@ class BeritaAcara extends Model
     protected $table = 'berita_acara'; // optional (jelas & aman)
     
     protected $fillable = [
+        'nama',
         'id_wajib_pajak',
         'telp',
         'narasi',

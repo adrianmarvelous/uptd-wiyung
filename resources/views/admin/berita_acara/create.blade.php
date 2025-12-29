@@ -33,6 +33,14 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 font-weight-bold">
+                        <strong><p>Nama Responden</p></strong>
+                    </div>
+                    <div class="col-lg-10">
+                        <input type="text" name="nama_responden" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 font-weight-bold">
                         <strong><p>Nomer Whatsapp</p></strong>
                     </div>
                     <div class="col-lg-10">
