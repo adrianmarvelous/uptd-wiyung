@@ -86,7 +86,7 @@
 
         <div class="d-flex justify-content-end">
             <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Buat Berita Acara
+                Buat Berita Acara {{ request()->route('jenis') == 'OP' ? 'PBJT' : 'PBB' }}
             </button>
         </div>
 

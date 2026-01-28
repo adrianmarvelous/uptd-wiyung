@@ -212,14 +212,14 @@
                         <li class="nav-item">
                             <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}">
                                 {{-- <i class="fa fa-desktop"></i> --}}
-                                <p>Berita Acara Tempat Hiburan</p>
+                                <p>Berita Acara PBJT</p>
                                 {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('berita_acara', ['jenis' => 'non hiburan']) }}">
                                 {{-- <i class="fa fa-desktop"></i> --}}
-                                <p>Berita Acara Non Hiburan</p>
+                                <p>Berita Acara PBB</p>
                                 {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
@@ -550,7 +550,7 @@
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
-                                        <span class="fw-bold">Hizrian</span>
+                                        <span class="fw-bold">UPTB Wiyung</span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -562,7 +562,7 @@
                                                         alt="image profile" class="avatar-img rounded" />
                                                 </div>
                                                 <div class="u-text">
-                                                    <h4>Hizrian</h4>
+                                                    <h4>UPTB Wiyung</h4>
                                                     <p class="text-muted">hello@example.com</p>
                                                     <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View
                                                         Profile</a>
@@ -615,13 +615,13 @@
                                 <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
                                     <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}"
                                         class="text-white text-decoration-none">
-                                        <h2 class="text-white">Berita Acara Hiburan</h2>
+                                        <h2 class="text-white">Berita Acara PBJT</h2>
                                     </a>
                                 </div>
                                 <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
                                     <a href="{{ route('berita_acara', ['jenis' => 'non hiburan']) }}"
                                         class="text-white text-decoration-none">
-                                        <h2 class="text-white">Berita Acara Non Hiburan</h2>
+                                        <h2 class="text-white">Berita Acara PBB</h2>
                                     </a>
                                 </div>
                             </div>
@@ -634,7 +634,7 @@
             <footer class="footer">
                 <div class="container-fluid d-flex justify-content-between text-center">
                     <div class="copyright">
-                        UPTD Wiyung
+                        UPTB Wiyung
                     </div>
                 </div>
             </footer>
