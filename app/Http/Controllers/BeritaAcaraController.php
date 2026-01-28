@@ -16,29 +16,46 @@ use Carbon\Carbon;
 
 class BeritaAcaraController extends Controller
 {
-    public function index()
+    public function index($jenis)
     {
-        $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])->orderBy('created_at', 'desc')->get();
-        // dd($data);
-        return view('admin.berita_acara.index', compact('data'));
+        $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])
+            ->whereHas('wajibPajak', function ($query) use ($jenis) {
+                $query->where('jenis', $jenis);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.berita_acara.index', compact('data', 'jenis'));
     }
+
 
     public function search(Request $request)
     {
         $q = $request->q;
+        $jenis = $request->jenis;
 
         if (!$q || strlen($q) < 2) {
             return response()->json([]);
         }
 
-        $data = WajibPajak::where('nop', 'like', "%{$q}%")
-            ->orWhere('nama', 'like', "%{$q}%")
-            ->orWhere('alamat', 'like', "%{$q}%")
+        $query = WajibPajak::query();
+
+        if ($jenis) {
+            $query->where('jenis', $jenis);
+        }
+
+        $data = $query
+            ->where(function ($q2) use ($q) {
+                $q2->where('nop', 'like', "%{$q}%")
+                    ->orWhere('nama', 'like', "%{$q}%")
+                    ->orWhere('alamat', 'like', "%{$q}%");
+            })
             ->limit(10)
             ->get(['id', 'nop', 'nama', 'alamat']);
 
         return response()->json($data);
     }
+
 
     public function create(Request $request)
     {
@@ -98,7 +115,7 @@ class BeritaAcaraController extends Controller
             $pegawai2 = null;
         }
 
-        return view('admin.berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat','nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2'));
+        return view('admin.berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2'));
     }
 
 
@@ -175,7 +192,7 @@ class BeritaAcaraController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('berita_acara')
+                ->route('berita_acara',['jenis' => $wajibPajak->jenis])
                 ->with('success', 'Berita Acara berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -188,10 +205,14 @@ class BeritaAcaraController extends Controller
 
     public function ba_pdf($id)
     {
-        
+
         Carbon::setLocale('id');
         $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])
             ->findOrFail($id);
+
+        // $path = public_path('spesimen/'.$data->pegawai_1->nip_nik.'.png');
+        // $base64 = 'data:image/png;base64,'.base64_encode(file_get_contents($path));
+
 
         // Render blade ke HTML
         $html = view('admin.berita_acara.ba_pdf', compact('data'))->render();

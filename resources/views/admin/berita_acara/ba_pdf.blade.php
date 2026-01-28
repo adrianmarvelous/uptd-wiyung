@@ -27,7 +27,7 @@
 </head>
 
 <body>
-    <table>
+    {{-- <table>
         <tr width="100%">
             <td width="30%" style="text-align: center;font-weight:bold">PEMERINTAH KOTA SURABAYA</td>
             <td width="30%"></td>
@@ -54,7 +54,7 @@
             <td width="30%"></td>
             <td width="10%"></td>
         </tr>
-    </table>
+    </table> --}}
 
     <h2 style="text-align: center;text-decoration:underline;font-weight:bold">LAMPIRAN: HASIL PEMERIKSAAN LAPANGAN</h2>
 
@@ -111,7 +111,9 @@
             <td>
                 <div style="display:flex; justify-content:flex-end; gap:10px;">
                     <span>1. {{ optional($data->pegawai_1)->nama_pegawai ?? '-' }}</span>
-                    <span>(..........)</span>
+                    {{-- <span><img src="{{ $base64 }}" width="120"></span>
+                    <span> --}}
+                    <span><img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawai_1->nip_nik.'.png'))) }}" width="70"></span>
                 </div>
             </td>
         </tr>

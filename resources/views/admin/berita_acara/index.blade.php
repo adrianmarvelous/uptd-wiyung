@@ -222,11 +222,11 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             let cache = [];
-
+            const jenis = "{{ request()->route('jenis') }}";
             async function searchWP(keyword) {
                 if (keyword.length < 2) return [];
 
-                const res = await fetch(`{{ route('berita_acara.search') }}?q=${encodeURIComponent(keyword)}`);
+                const res = await fetch(`{{ route('berita_acara.search') }}?q=${encodeURIComponent(keyword)}&jenis=${jenis}`);
                 return await res.json();
             }
 

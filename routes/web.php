@@ -19,8 +19,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->group(function () 
         return view('admin.index');
     })->name('dashboard');
 
-    Route::get('/berita_acara', [BeritaAcaraController::class, 'index'])->name('berita_acara');
     Route::get('/berita_acara/search', [BeritaAcaraController::class, 'search'])->name('berita_acara.search');
+    Route::get('/berita_acara/{jenis}', [BeritaAcaraController::class, 'index'])->name('berita_acara');
     Route::post('/berita_acara/create', [BeritaAcaraController::class, 'create'])->name('berita_acara.create');
     Route::post('/berita_acara/approval_wajib_pajak', [BeritaAcaraController::class, 'approval_wajib_pajak'])->name('berita_acara.approval_wajib_pajak');
     Route::post('/berita_acara/store', [BeritaAcaraController::class, 'store'])->name('berita_acara.store');

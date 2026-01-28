@@ -210,9 +210,16 @@
               </li> --}}
 
                         <li class="nav-item">
-                            <a href="{{ route('berita_acara') }}">
-                                <i class="fa fa-desktop"></i>
-                                <p>Berita Acara</p>
+                            <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}">
+                                {{-- <i class="fa fa-desktop"></i> --}}
+                                <p>Berita Acara Tempat Hiburan</p>
+                                {{-- <span class="badge badge-success">4</span> --}}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('berita_acara', ['jenis' => 'non hiburan']) }}">
+                                {{-- <i class="fa fa-desktop"></i> --}}
+                                <p>Berita Acara Non Hiburan</p>
                                 {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
@@ -602,16 +609,23 @@
             </div> --}}
 
                     @if (Route::current()->getName() == 'dashboard')
-                    <div class="card p-3">
-                      <h1>Main Menu</h1>
-                      <div class="row p-3">
-                        <div class="col-lg-3 card shadow text-center btn btn-primary">
-                          <a href="{{ route('berita_acara') }}" class="text-white text-decoration-none">
-                              <h2 class="text-white">Berita Acara</h2>
-                          </a>
+                        <div class="card p-3">
+                            <h1>Main Menu</h1>
+                            <div class="row p-3">
+                                <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
+                                    <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}"
+                                        class="text-white text-decoration-none">
+                                        <h2 class="text-white">Berita Acara Hiburan</h2>
+                                    </a>
+                                </div>
+                                <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
+                                    <a href="{{ route('berita_acara', ['jenis' => 'non hiburan']) }}"
+                                        class="text-white text-decoration-none">
+                                        <h2 class="text-white">Berita Acara Non Hiburan</h2>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                    </div>
                     @endif
                     @yield('content')
                 </div>
@@ -678,63 +692,63 @@
             });
         });
     </script>
-    
+
     <script>
-      $(document).ready(function () {
-        $("#basic-datatables").DataTable({});
+        $(document).ready(function() {
+            $("#basic-datatables").DataTable({});
 
-        $("#multi-filter-select").DataTable({
-          pageLength: 5,
-          initComplete: function () {
-            this.api()
-              .columns()
-              .every(function () {
-                var column = this;
-                var select = $(
-                  '<select class="form-select"><option value=""></option></select>'
-                )
-                  .appendTo($(column.footer()).empty())
-                  .on("change", function () {
-                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+            $("#multi-filter-select").DataTable({
+                pageLength: 5,
+                initComplete: function() {
+                    this.api()
+                        .columns()
+                        .every(function() {
+                            var column = this;
+                            var select = $(
+                                    '<select class="form-select"><option value=""></option></select>'
+                                )
+                                .appendTo($(column.footer()).empty())
+                                .on("change", function() {
+                                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
 
-                    column
-                      .search(val ? "^" + val + "$" : "", true, false)
-                      .draw();
-                  });
+                                    column
+                                        .search(val ? "^" + val + "$" : "", true, false)
+                                        .draw();
+                                });
 
-                column
-                  .data()
-                  .unique()
-                  .sort()
-                  .each(function (d, j) {
-                    select.append(
-                      '<option value="' + d + '">' + d + "</option>"
-                    );
-                  });
-              });
-          },
+                            column
+                                .data()
+                                .unique()
+                                .sort()
+                                .each(function(d, j) {
+                                    select.append(
+                                        '<option value="' + d + '">' + d + "</option>"
+                                    );
+                                });
+                        });
+                },
+            });
+
+            // Add Row
+            $("#add-row").DataTable({
+                pageLength: 5,
+            });
+
+            var action =
+                '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+
+            $("#addRowButton").click(function() {
+                $("#add-row")
+                    .dataTable()
+                    .fnAddData([
+                        $("#addName").val(),
+                        $("#addPosition").val(),
+                        $("#addOffice").val(),
+                        action,
+                    ]);
+                $("#addRowModal").modal("hide");
+            });
         });
-
-        // Add Row
-        $("#add-row").DataTable({
-          pageLength: 5,
-        });
-
-        var action =
-          '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
-
-        $("#addRowButton").click(function () {
-          $("#add-row")
-            .dataTable()
-            .fnAddData([
-              $("#addName").val(),
-              $("#addPosition").val(),
-              $("#addOffice").val(),
-              action,
-            ]);
-          $("#addRowModal").modal("hide");
-        });
-      });
     </script>
 </body>
 
