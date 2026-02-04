@@ -1,23 +1,22 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up()
     {
         Schema::table('berita_acara', function (Blueprint $table) {
-            $table->longText('narasi')->nullable()->change();
-            $table->longText('pegawai1')->nullable()->change();
-            
+            $table->string('file_berita_acara')->nullable()->after('ttd_wajib_pajak');
         });
     }
 
     public function down()
     {
         Schema::table('berita_acara', function (Blueprint $table) {
-            $table->longText('narasi')->nullable(false)->change();
-            $table->longText('pegawai1')->nullable(false)->change();
+            $table->dropColumn('file_berita_acara');
         });
     }
 };
