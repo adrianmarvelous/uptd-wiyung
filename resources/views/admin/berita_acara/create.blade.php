@@ -5,11 +5,48 @@
     <h1>Buat Berita Acara</h1>
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('berita_acara.approval_wajib_pajak')}}" method="POST">
+            <div class="d-flex justify-content-end">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Upload Berita Acara
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title fw-bold" id="exampleModalLabel">Upload Berita Acara</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form action="{{ route('berita_acara.upload') }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="nop" value="{{ $nop }}">
+                                <div class="modal-body">
+                                    <label for="">Upload File</label>
+                                    <input type="file" name="file" class="form-control" required accept=".pdf">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Tutup
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form action="{{ route('berita_acara.approval_wajib_pajak') }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-lg-2">
-                        <strong><p>NOP</p></strong>
+                        <strong>
+                            <p>NOP</p>
+                        </strong>
                     </div>
                     <div class="col-lg-10">
                         <p>{{ $nop }}</p>
@@ -17,7 +54,9 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-2 font-weight-bold">
-                        <strong><p>Nama</p></strong>
+                        <strong>
+                            <p>Nama</p>
+                        </strong>
                     </div>
                     <div class="col-lg-10">
                         <p>{{ $nama }}</p>
@@ -25,7 +64,9 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-2 font-weight-bold">
-                        <strong><p>Alamat</p></strong>
+                        <strong>
+                            <p>Alamat</p>
+                        </strong>
                     </div>
                     <div class="col-lg-10">
                         <p>{{ $alamat }}</p>
@@ -33,7 +74,9 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 font-weight-bold">
-                        <strong><p>Nama Responden</p></strong>
+                        <strong>
+                            <p>Nama Responden</p>
+                        </strong>
                     </div>
                     <div class="col-lg-10">
                         <input type="text" name="nama_responden" class="form-control" required>
@@ -41,7 +84,9 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 font-weight-bold">
-                        <strong><p>Nomer Whatsapp</p></strong>
+                        <strong>
+                            <p>Nomer Whatsapp</p>
+                        </strong>
                     </div>
                     <div class="col-lg-10">
                         <input type="number" name="telp" class="form-control" required>
@@ -75,9 +120,9 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end mt-3">
-                    <input type="hidden" name="nop" value="{{$nop}}">
-                    <input type="hidden" name="nama" value="{{$nama}}">
-                    <input type="hidden" name="alamat" value="{{$alamat}}">
+                    <input type="hidden" name="nop" value="{{ $nop }}">
+                    <input type="hidden" name="nama" value="{{ $nama }}">
+                    <input type="hidden" name="alamat" value="{{ $alamat }}">
                     <button type="submit" class="btn btn-primary">Masuakn Tanda Tangan Wajib Pajak</button>
                 </div>
             </form>

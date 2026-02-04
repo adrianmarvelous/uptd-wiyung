@@ -192,7 +192,7 @@ class BeritaAcaraController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('berita_acara',['jenis' => $wajibPajak->jenis])
+                ->route('berita_acara', ['jenis' => $wajibPajak->jenis])
                 ->with('success', 'Berita Acara berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -239,5 +239,59 @@ class BeritaAcaraController extends Controller
         return response(
             $mpdf->Output('berita-acara.pdf', 'S')
         )->header('Content-Type', 'application/pdf');
+    }
+
+
+    public function upload(Request $request)
+    {
+        $validated = $request->validate([
+            'nop' => ['required', 'string', 'max:255', new SafeInput],
+        ]);
+        
+        $wajibPajak = WajibPajak::where('nop', $validated['nop'])->first();
+
+        if (!$wajibPajak) {
+            return back()->withErrors([
+                'nop' => 'Wajib Pajak tidak ditemukan'
+            ])->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // ✅ Validation
+            $request->validate([
+                'file' => 'required|file|mimes:pdf,doc,docx|max:2048',
+            ]);
+
+            // ✅ Upload file
+            $file = $request->file('file');
+            $fileName = 'berita_acara_' . time() . '.' . $file->getClientOriginalExtension();
+
+            $path = $file->storeAs(
+                'berita_acara',
+                $fileName,
+                'public'
+            );
+
+            // ✅ Save / update database
+            BeritaAcara::create([
+                'id_wajib_pajak'  => $wajibPajak->id,
+                'file_berita_acara' => $path,
+            ]);
+
+            DB::commit();
+
+            // ✅ SUCCESS RETURN (as requested)
+            return redirect()
+                ->route('berita_acara', ['jenis' => $wajibPajak->jenis])
+                ->with('success', 'Berita Acara berhasil disimpan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->withErrors([
+                'error' => 'Gagal menyimpan Berita Acara: ' . $e->getMessage()
+            ])->withInput();
+        }
     }
 }

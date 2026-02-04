@@ -87,8 +87,7 @@
     <h2 style="text-align: center;text-decoration:underline;font-weight:bold">BUKTI PEMERIKSAAN</h2>
     <div>
         <p style="text-indent: 30px">Pada hari ini {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('l') }}
-            tanggal {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('j F Y') }} jam
-            {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('H:i') }} telah diadakan pemeriksaan ditempat,
+            tanggal {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('j F Y') }} telah diadakan pemeriksaan ditempat,
             dengan hasil sebagai berikut</p>
         <p style="text-indent: 30px">{!! $data->narasi !!}</p>
     </div>
@@ -99,7 +98,7 @@
                 {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('j F Y') }}</td>
         </tr>
         <tr>
-            <td style="text-align: center">Menegtahui</td>
+            <td style="text-align: center">Mengetahui</td>
             <td></td>
         </tr>
         <tr>

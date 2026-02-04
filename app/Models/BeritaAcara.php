@@ -15,6 +15,7 @@ class BeritaAcara extends Model
         'narasi',
         'pegawai1',
         'pegawai2',
+        'file_berita_acara',
         'ttd_wajib_pajak',
     ];
 
