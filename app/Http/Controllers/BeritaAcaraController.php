@@ -264,14 +264,15 @@ class BeritaAcaraController extends Controller
                 'file' => 'required|file|mimes:pdf,doc,docx|max:2048',
             ]);
 
+            // ✅ Upload file
             $file = $request->file('file');
             $fileName = 'berita_acara_' . time() . '.' . $file->getClientOriginalExtension();
 
-            $destinationPath = public_path('berita_acara');
-            $file->move($destinationPath, $fileName);
-
-            $path = 'berita_acara/' . $fileName;
-
+            $path = $file->storeAs(
+                'berita_acara',
+                $fileName,
+                'public'
+            );
 
             // ✅ Save / update database
             BeritaAcara::create([
