@@ -123,7 +123,7 @@
                     <input type="hidden" name="nop" value="{{ $nop }}">
                     <input type="hidden" name="nama" value="{{ $nama }}">
                     <input type="hidden" name="alamat" value="{{ $alamat }}">
-                    <button type="submit" class="btn btn-primary">Masuakn Tanda Tangan Wajib Pajak</button>
+                    <button type="submit" class="btn btn-primary">Masukan Tanda Tangan Wajib Pajak</button>
                 </div>
             </form>
         </div>
