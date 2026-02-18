@@ -23,9 +23,13 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
     Route::get('/berita_acara/{jenis}', [BeritaAcaraController::class, 'index'])->name('berita_acara');
     Route::post('/berita_acara/create', [BeritaAcaraController::class, 'create'])->name('berita_acara.create');
     Route::post('/berita_acara/upload', [BeritaAcaraController::class, 'upload'])->name('berita_acara.upload');
+    Route::get('/berita_acara/upload-csv', function () {
+        return view('admin.berita_acara.upload_csv');
+    })->name('berita_acara.upload_csv');
     Route::post('/berita_acara/approval_wajib_pajak', [BeritaAcaraController::class, 'approval_wajib_pajak'])->name('berita_acara.approval_wajib_pajak');
     Route::post('/berita_acara/store', [BeritaAcaraController::class, 'store'])->name('berita_acara.store');
     Route::get('/berita_acara/ba_pdf/{id}', [BeritaAcaraController::class, 'ba_pdf'])->name('berita_acara.ba_pdf');
+    Route::post('/readCsv', [BeritaAcaraController::class, 'readCsv'])->name('read.csv');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

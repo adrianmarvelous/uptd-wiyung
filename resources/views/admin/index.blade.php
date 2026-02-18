@@ -625,6 +625,12 @@
                                     </a>
                                 </div>
                             </div>
+                            <form method="POST" action="{{ route('read.csv') }}" enctype="multipart/form-data">
+    @csrf
+    <input type="file" name="file" accept=".csv" required>
+    <button type="submit">Upload</button>
+</form>
+
                         </div>
                     @endif
                     @yield('content')

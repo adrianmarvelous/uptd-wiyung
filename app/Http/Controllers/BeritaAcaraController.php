@@ -247,7 +247,7 @@ class BeritaAcaraController extends Controller
         $validated = $request->validate([
             'nop' => ['required', 'string', 'max:255', new SafeInput],
         ]);
-        
+
         $wajibPajak = WajibPajak::where('nop', $validated['nop'])->first();
 
         if (!$wajibPajak) {
@@ -292,6 +292,38 @@ class BeritaAcaraController extends Controller
             return back()->withErrors([
                 'error' => 'Gagal menyimpan Berita Acara: ' . $e->getMessage()
             ])->withInput();
+        }
+    }
+    public function readCsv(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt|max:5120',
+        ]);
+
+        $file = $request->file('file');
+        $results = [];
+
+        if (($handle = fopen($file->getRealPath(), 'r')) !== false) {
+            $isHeader = true;
+
+            while (($data = fgetcsv($handle, 0, ';')) !== false) {
+                if ($isHeader) {
+                    $isHeader = false;
+                    continue;
+                }
+
+                $results[] = [
+                    'col_a' => $data[0] ?? null,
+                    'col_b' => $data[1] ?? null,
+                ];
+            }
+            fclose($handle);
+        }
+        foreach ($results as $value) {
+            WajibPajak::where('nop', $value['col_b'])
+                ->update([
+                    'jenis' => $value['col_a']
+                ]);
         }
     }
 }
