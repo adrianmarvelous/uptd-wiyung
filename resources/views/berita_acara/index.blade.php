@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('index')
 
 @section('content')
     {{-- <style>
@@ -245,8 +245,11 @@
                     class="list-group-item list-group-item-action"
                     data-nop="${item.nop}"
                     data-nama="${item.nama}"
-                    data-alamat="${item.alamat}">
-                    ${item[field]}
+                    data-alamat="${item.alamat}"
+                    data-jenis="${item.jenis}">
+                    ${field === 'nama'
+                    ? `${item.nama} - ${item.jenis}`
+                    : item[field]}
                 </button>
             `);
                 });

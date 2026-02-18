@@ -16,7 +16,7 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
 
     // Dashboard main page
     Route::get('/', function () {
-        return view('admin.index');
+        return view('index');
     })->name('dashboard');
 
     Route::get('/berita_acara/search', [BeritaAcaraController::class, 'search'])->name('berita_acara.search');
@@ -24,7 +24,7 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
     Route::post('/berita_acara/create', [BeritaAcaraController::class, 'create'])->name('berita_acara.create');
     Route::post('/berita_acara/upload', [BeritaAcaraController::class, 'upload'])->name('berita_acara.upload');
     Route::get('/berita_acara/upload-csv', function () {
-        return view('admin.berita_acara.upload_csv');
+        return view('berita_acara.upload_csv');
     })->name('berita_acara.upload_csv');
     Route::post('/berita_acara/approval_wajib_pajak', [BeritaAcaraController::class, 'approval_wajib_pajak'])->name('berita_acara.approval_wajib_pajak');
     Route::post('/berita_acara/store', [BeritaAcaraController::class, 'store'])->name('berita_acara.store');

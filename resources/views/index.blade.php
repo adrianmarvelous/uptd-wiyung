@@ -217,7 +217,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('berita_acara', ['jenis' => 'non hiburan']) }}">
+                            <a href="{{ route('berita_acara', ['jenis' => 'pbb']) }}">
                                 {{-- <i class="fa fa-desktop"></i> --}}
                                 <p>Berita Acara PBB</p>
                                 {{-- <span class="badge badge-success">4</span> --}}
@@ -619,7 +619,7 @@
                                     </a>
                                 </div>
                                 <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
-                                    <a href="{{ route('berita_acara', ['jenis' => 'non hiburan']) }}"
+                                    <a href="{{ route('berita_acara', ['jenis' => 'pbb']) }}"
                                         class="text-white text-decoration-none">
                                         <h2 class="text-white">Berita Acara PBB</h2>
                                     </a>

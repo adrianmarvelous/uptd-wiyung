@@ -20,13 +20,18 @@ class BeritaAcaraController extends Controller
     {
         $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])
             ->whereHas('wajibPajak', function ($query) use ($jenis) {
-                $query->where('jenis', $jenis);
+                if ($jenis === 'pbb') {
+                    $query->where('jenis', 'pbb');
+                } else {
+                    $query->where('jenis', '!=', 'pbb');
+                }
             })
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.berita_acara.index', compact('data', 'jenis'));
+        return view('berita_acara.index', compact('data', 'jenis'));
     }
+
 
 
     public function search(Request $request)
@@ -39,10 +44,14 @@ class BeritaAcaraController extends Controller
         }
 
         $query = WajibPajak::query();
-
         if ($jenis) {
-            $query->where('jenis', $jenis);
+            if ($jenis === 'pbb') {
+                $query->where('jenis', 'pbb');
+            } else {
+                $query->where('jenis', '!=', 'pbb');
+            }
         }
+
 
         $data = $query
             ->where(function ($q2) use ($q) {
@@ -51,7 +60,7 @@ class BeritaAcaraController extends Controller
                     ->orWhere('alamat', 'like', "%{$q}%");
             })
             ->limit(10)
-            ->get(['id', 'nop', 'nama', 'alamat']);
+            ->get(['id', 'nop', 'nama', 'alamat','jenis']);
 
         return response()->json($data);
     }
@@ -80,7 +89,7 @@ class BeritaAcaraController extends Controller
         $pegawai = Pegawai::orderBy('nama_pegawai', 'asc')->get();
 
 
-        return view('admin.berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai'));
+        return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai'));
     }
 
     public function approval_wajib_pajak(Request $request)
@@ -115,7 +124,7 @@ class BeritaAcaraController extends Controller
             $pegawai2 = null;
         }
 
-        return view('admin.berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2'));
+        return view('berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2'));
     }
 
 
@@ -215,7 +224,7 @@ class BeritaAcaraController extends Controller
 
 
         // Render blade ke HTML
-        $html = view('admin.berita_acara.ba_pdf', compact('data'))->render();
+        $html = view('berita_acara.ba_pdf', compact('data'))->render();
         // dd($data);
 
         // Init mPDF
