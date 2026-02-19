@@ -114,8 +114,8 @@
                             {{-- Nama --}}
                             <label>Nama</label>
                             <div class="position-relative mb-3">
-                                <input type="text" class="form-control search-input" id="nama" name="nama"
-                                    placeholder="Cari Nama" autocomplete="off">
+                                <input type="text" id="nama" class="form-control search-input" autocomplete="off">
+                                <input type="hidden" id="nama_real" name="nama">
                                 <div class="dropdown-list list-group d-none"></div>
                             </div>
 
@@ -180,17 +180,19 @@
                             </td> --}}
 
                             {{-- NO (desktop only) --}}
-                            <td  class="d-none d-md-table-cell">
+                            <td class="d-none d-md-table-cell">
                                 {{ $loop->iteration }}
                             </td>
 
-                            <td  class="d-none d-md-table-cell">{{ $item->wajibPajak->nop }}</td>
+                            <td class="d-none d-md-table-cell">{{ $item->wajibPajak->nop }}</td>
                             <td data-label="Nama">{{ $item->wajibPajak->nama }}</td>
-                            <td  class="d-none d-md-table-cell">{{ $item->wajibPajak->alamat }}</td>
-                            <td  class="d-none d-md-table-cell">{!! $item->narasi !!}</td>
-                            <td  class="d-none d-md-table-cell">{{ $item->pegawai1 ? $item->pegawai_1->nama_pegawai : '-' }}</td>
-                            <td  class="d-none d-md-table-cell">{{ $item->pegawai2 ? $item->pegawai_2->nama_pegawai : '-' }}</td>
-                            <td  class="d-none d-md-table-cell">{{ $item->created_at->format('d-m-Y') }}</td>
+                            <td class="d-none d-md-table-cell">{{ $item->wajibPajak->alamat }}</td>
+                            <td class="d-none d-md-table-cell">{!! $item->narasi !!}</td>
+                            <td class="d-none d-md-table-cell">{{ $item->pegawai1 ? $item->pegawai_1->nama_pegawai : '-' }}
+                            </td>
+                            <td class="d-none d-md-table-cell">{{ $item->pegawai2 ? $item->pegawai_2->nama_pegawai : '-' }}
+                            </td>
+                            <td class="d-none d-md-table-cell">{{ $item->created_at->format('d-m-Y') }}</td>
 
 
                             <td class="aksi-cell">
@@ -199,15 +201,20 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="https://wa.me/{{ $item->telp }}" target="_blank"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
-                                        <li><a class="dropdown-item" href="{{ $item->file_berita_acara ? asset($item->file_berita_acara) : route('berita_acara.ba_pdf', $item->id) }}" target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>
+                                        <li><a class="dropdown-item" href="https://wa.me/{{ $item->telp }}"
+                                                target="_blank"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ $item->file_berita_acara ? asset($item->file_berita_acara) : route('berita_acara.ba_pdf', $item->id) }}"
+                                                target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>
                                         </li>
-                                        <li><a class="dropdown-item" href="{{ route('berita_acara.ba_pdf', $item->id) }}" target="_blank"> <i class="bi bi-pencil"></i> Edit</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('berita_acara.ba_pdf', $item->id) }}"
+                                                target="_blank"> <i class="bi bi-pencil"></i> Edit</a></li>
                                         <li>
                                             <form method="POST" action="#">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="dropdown-item text-danger"><i class="bi bi-trash"></i> Hapus</button>
+                                                <button class="dropdown-item text-danger"><i class="bi bi-trash"></i>
+                                                    Hapus</button>
                                             </form>
                                         </li>
                                     </ul>
@@ -227,7 +234,8 @@
             async function searchWP(keyword) {
                 if (keyword.length < 2) return [];
 
-                const res = await fetch(`{{ route('berita_acara.search') }}?q=${encodeURIComponent(keyword)}&jenis=${jenis}`);
+                const res = await fetch(
+                    `{{ route('berita_acara.search') }}?q=${encodeURIComponent(keyword)}&jenis=${jenis}`);
                 return await res.json();
             }
 
@@ -247,9 +255,13 @@
                     data-nama="${item.nama}"
                     data-alamat="${item.alamat}"
                     data-jenis="${item.jenis}">
-                    ${field === 'nama'
-                    ? `${item.nama} - ${item.jenis}`
-                    : item[field]}
+                    ${
+                        field === 'nama'
+                            ? (item.jenis !== 'pbb'
+                                ? `${item.nama} - ${item.jenis}`
+                                : item.nama)
+                            : item[field]
+                    }
                 </button>
             `);
                 });
@@ -259,7 +271,11 @@
 
             function fillAll(item) {
                 document.getElementById('nop').value = item.nop;
-                document.getElementById('nama').value = item.nama;
+                document.getElementById('nama').value =
+                    item.jenis !== 'pbb' ?
+                    `${item.nama} - ${item.jenis}` :
+                    item.nama;
+                document.getElementById('nama_real').value = item.nama; 
                 document.getElementById('alamat').value = item.alamat;
 
                 document.querySelectorAll('.dropdown-list').forEach(d => d.classList.add('d-none'));
@@ -274,7 +290,7 @@
             }
 
             document.querySelectorAll('.search-input').forEach(input => {
-                const dropdown = input.nextElementSibling;
+                const dropdown = input.parentElement.querySelector('.dropdown-list');
                 const field = input.id; // nop | nama | alamat
 
                 const debounced = debounce(async () => {
@@ -292,9 +308,14 @@
                     fillAll({
                         nop: btn.dataset.nop,
                         nama: btn.dataset.nama,
-                        alamat: btn.dataset.alamat
+                        alamat: btn.dataset.alamat,
+                        jenis: btn.dataset.jenis
                     });
                 });
+            });
+
+            document.getElementById('nama').addEventListener('input', function () {
+                document.getElementById('nama_real').value = this.value;
             });
 
             document.addEventListener('click', e => {
