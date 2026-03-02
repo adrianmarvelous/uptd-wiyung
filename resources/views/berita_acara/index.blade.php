@@ -188,9 +188,9 @@
                             <td data-label="Nama">{{ $item->wajibPajak->nama }}</td>
                             <td class="d-none d-md-table-cell">{{ $item->wajibPajak->alamat }}</td>
                             <td class="d-none d-md-table-cell">{!! $item->narasi !!}</td>
-                            <td class="d-none d-md-table-cell">{{ $item->pegawai1 ? $item->pegawai_1->nama_pegawai : '-' }}
+                            <td class="d-none d-md-table-cell">{{ $item->pegawaiSatu ? $item->pegawaiSatu->nama_pegawai : '-' }}
                             </td>
-                            <td class="d-none d-md-table-cell">{{ $item->pegawai2 ? $item->pegawai_2->nama_pegawai : '-' }}
+                            <td class="d-none d-md-table-cell">{{ $item->pegawaiDua ? $item->pegawaiDua->nama_pegawai : '-' }}
                             </td>
                             <td class="d-none d-md-table-cell">{{ $item->created_at->format('d-m-Y') }}</td>
 
@@ -201,7 +201,7 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="https://wa.me/{{ $item->telp }}"
+                                        <li><a class="dropdown-item" href="https://wa.me/{{ $item->telp }}?text={{ urlencode('Berita Acara Anda Disini http://127.0.0.1:8000/berita_acara/ba_pdf/'.$item->id) }}"
                                                 target="_blank"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
                                         <li><a class="dropdown-item"
                                                 href="{{ $item->file_berita_acara ? asset($item->file_berita_acara) : route('berita_acara.ba_pdf', $item->id) }}"

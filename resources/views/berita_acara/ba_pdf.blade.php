@@ -77,14 +77,14 @@
     </tr>
     <tr>
         <td>Pegawai 1</td>
-        <td>: {{ optional($data->pegawai_1)->nama_pegawai ?? '-' }}</td>
+        <td>: {{ optional($data->pegawaiSatu)->nama_pegawai ?? '-' }}</td>
     </tr>
     <tr>
         <td>Pegawai 2</td>
-        <td>: {{ optional($data->pegawai_2)->nama_pegawai ?? '-' }}</td>
+        <td>: {{ optional($data->pegawaiDua)->nama_pegawai ?? '-' }}</td>
     </tr> --}}
     </table>
-    <h2 style="text-align: center;text-decoration:underline;font-weight:bold">BUKTI PEMERIKSAAN</h2>
+    <h2 style="text-align: center;text-decoration:underline;font-weight:bold">BERITA PEMERIKSAAN</h2>
     <div>
         <p style="text-indent: 30px">Pada hari ini {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('l') }}
             tanggal {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('j F Y') }} telah diadakan pemeriksaan ditempat,
@@ -106,41 +106,41 @@
             <td style="text-align: center">Petugas Pemeriksa</td>
         </tr>
         <tr>
-            <td style="text-align: center"></td>
+            <td style="text-align: center" rowspan="3">
+                <img src="{{ public_path($data->ttd_wajib_pajak) }}" width="200">
+            </td>
             <td>
-                <div style="display:flex; justify-content:flex-end; gap:10px;">
-                    <span>1. {{ optional($data->pegawai_1)->nama_pegawai ?? '-' }}</span>
-                    {{-- <span><img src="{{ $base64 }}" width="120"></span>
-                    <span> --}}
-                    <span><img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawai_1->nip_nik.'.png'))) }}" width="70"></span>
-                </div>
+                <span>1. {{ optional($data->pegawaiSatu)->nama_pegawai ?? '-' }}</span>
+                {{-- <span><img src="{{ $base64 }}" width="120"></span>
+                <span> --}}
+            </td>
+            <td rowspan="2">
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawaiSatu->nip_nik.'.png'))) }}" width="70">
             </td>
         </tr>
         <tr>
-            <td style="text-align: center"></td>
             <td>
-                NIP. {{ optional($data->pegawai_1)->nip_nik ?? '-' }}
+                NIP. {{ optional($data->pegawaiSatu)->nip_nik ?? '-' }}
             </td>
         </tr>
 
         <tr>
-            <td style="text-align: center">
-                <img src="{{ public_path($data->ttd_wajib_pajak) }}" width="200">
-            </td>
             <td>
-                @if ($data->pegawai_2)
-                    <div style="display:flex; justify-content:flex-end; gap:10px;">
-                        <span>2. {{ optional($data->pegawai_2)->nama_pegawai ?? '-' }}</span>
-                        <span>(..........)</span>
-                    </div>
+                @if ($data->pegawaiDua)
+                        2. {{ optional($data->pegawaiDua)->nama_pegawai ?? '-' }}
+                @endif
+            </td>
+            <td rowspan="2">
+                @if ($data->pegawaiDua)
+                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawaiDua->nip_nik.'.png'))) }}" width="70">
                 @endif
             </td>
         </tr>
         <tr>
             <td style="text-align: center">{{ $data->nama }}</td>
             <td>
-                @if ($data->pegawai_2)
-                    NIP. {{ optional($data->pegawai_2)->nip_nik ?? '-' }}
+                @if ($data->pegawaiDua)
+                    NIP. {{ optional($data->pegawaiDua)->nip_nik ?? '-' }}
                 @endif
             </td>
         </tr>

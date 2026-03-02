@@ -10,10 +10,19 @@ class Pegawai extends Model
     
     public function pegawai1()
     {
-        return $this->belongsTo(BeritaAcara::class,'id','pegawai1');
+        return $this->belongsTo(Pegawai::class, 'pegawai1');
     }
     public function pegawai2()
     {
-        return $this->belongsTo(BeritaAcara::class,'id','pegawai2');
+        return $this->belongsTo(Pegawai::class, 'pegawai2');
+    }
+    public function beritaAcaraSebagaiPegawai1()
+    {
+        return $this->hasMany(BeritaAcara::class, 'pegawai1');
+    }
+
+    public function beritaAcaraSebagaiPegawai2()
+    {
+        return $this->hasMany(BeritaAcara::class, 'pegawai2');
     }
 }

@@ -4,13 +4,6 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BeritaAcaraController;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
 
@@ -34,6 +27,13 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/berita_acara_petugas',[BeritaAcaraController::class, 'petugas'])->name('berita_acara.petugas');
+        Route::get('/berita_acara_petugas/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_petugas'])->name('berita_acara.petugas.detail');
+        Route::get('/berita_acara_wp/{jenis}',[BeritaAcaraController::class, 'wp'])->name('berita_acara.wp');
+        Route::get('/berita_acara_wp/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_pwp'])->name('berita_acara.wp.detail');
+    });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

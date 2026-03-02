@@ -18,7 +18,7 @@ class BeritaAcaraController extends Controller
 {
     public function index($jenis)
     {
-        $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])
+        $data = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])
             ->whereHas('wajibPajak', function ($query) use ($jenis) {
                 if ($jenis === 'pbb') {
                     $query->where('jenis', 'pbb');
@@ -60,7 +60,7 @@ class BeritaAcaraController extends Controller
                     ->orWhere('alamat', 'like', "%{$q}%");
             })
             ->limit(10)
-            ->get(['id', 'nop', 'nama', 'alamat','jenis']);
+            ->get(['id', 'nop', 'nama', 'alamat', 'jenis']);
 
         return response()->json($data);
     }
@@ -216,10 +216,11 @@ class BeritaAcaraController extends Controller
     {
 
         Carbon::setLocale('id');
-        $data = BeritaAcara::with(['wajibPajak', 'pegawai_1', 'pegawai_2'])
+        $data = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])
             ->findOrFail($id);
+        // dd($data);
 
-        // $path = public_path('spesimen/'.$data->pegawai_1->nip_nik.'.png');
+        // $path = public_path('spesimen/'.$data->pegawai1->nip_nik.'.png');
         // $base64 = 'data:image/png;base64,'.base64_encode(file_get_contents($path));
 
 
@@ -302,6 +303,98 @@ class BeritaAcaraController extends Controller
                 'error' => 'Gagal menyimpan Berita Acara: ' . $e->getMessage()
             ])->withInput();
         }
+    }
+
+    public function petugas(Request $request)
+    {
+        // Jika tidak ada input bulan → gunakan bulan sekarang
+        $bulan = $request->bulan ?? Carbon::now()->month;
+        $tahun = $request->tahun ?? Carbon::now()->year;
+
+        // Query pegawai1
+        $pegawai1 = DB::table('berita_acara')
+            ->select(
+                'pegawai1 as id',
+                DB::raw('MONTH(created_at) as bulan'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->whereNotNull('pegawai1')
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->groupBy('pegawai1', DB::raw('MONTH(created_at)'));
+
+        // Query pegawai2
+        $pegawai2 = DB::table('berita_acara')
+            ->select(
+                'pegawai2 as id',
+                DB::raw('MONTH(created_at) as bulan'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->whereNotNull('pegawai2')
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->groupBy('pegawai2', DB::raw('MONTH(created_at)'));
+
+        // Gabungkan dan jumlahkan
+        $pegawai = DB::query()
+            ->fromSub(
+                $pegawai1->unionAll($pegawai2),
+                'gabungan'
+            )
+            ->join('pegawai', 'pegawai.id', '=', 'gabungan.id')
+            ->select(
+                'pegawai.id',
+                'pegawai.nama_pegawai',
+                'gabungan.bulan',
+                DB::raw('SUM(total) as jumlah_berita_acara')
+            )
+            ->groupBy('pegawai.id', 'pegawai.nama_pegawai', 'gabungan.bulan')
+            ->orderBy('jumlah_berita_acara', 'desc')
+            ->get();
+        // dd($pegawai);
+        return view('admin.petugas.index', compact('pegawai', 'bulan', 'tahun'));
+    }
+
+    public function detail_petugas($id, $bulan, $tahun)
+    {
+        $bulan = (int) $bulan;
+        $tahun = (int) $tahun;
+        $petugas = Pegawai::findOrFail($id);
+        $data = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])
+            ->where(function ($query) use ($id) {
+                $query->where('pegawai1', $id)
+                    ->orWhere('pegawai2', $id);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+        //    dd($data); 
+        return view('admin.petugas.detail', compact('data', 'petugas', 'bulan', 'tahun'));
+    }
+
+    public function wp(Request $request, $jenis)
+    {
+        $bulan = $request->bulan ?? Carbon::now()->month;
+        $tahun = $request->tahun ?? Carbon::now()->year;
+
+        $jenis_ = $jenis;
+        $data = BeritaAcara::with('wajibPajak')
+            ->whereHas('wajibPajak', function ($query) use ($jenis) {
+                $query->when(
+                    $jenis === 'pbb',
+                    fn ($q) => $q->where('jenis', 'pbb'),
+                    fn ($q) => $q->where('jenis', '!=', 'pbb')
+                );
+            })
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->orderBy('created_at', 'desc')
+            ->distinct()
+            ->get();
+
+        $jenis = $jenis_;
+        // dd($data);
+
+        return view('admin.wp.index', compact('data', 'jenis', 'bulan', 'tahun'));
     }
     // public function readCsv(Request $request)
     // {

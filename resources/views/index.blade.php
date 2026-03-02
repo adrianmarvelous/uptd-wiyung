@@ -223,6 +223,29 @@
                                 {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
+                        @if(auth()->user()->role === 'admin')
+                          <li class="nav-item">
+                              <a href="{{ route('berita_acara.petugas') }}">
+                                  {{-- <i class="fa fa-desktop"></i> --}}
+                                  <p>By Nama Petugas</p>
+                                  {{-- <span class="badge badge-success">4</span> --}}
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('berita_acara.wp',['jenis' => 'pbjt']) }}">
+                                  {{-- <i class="fa fa-desktop"></i> --}}
+                                  <p>By Wajib Pajak PBJT</p>
+                                  {{-- <span class="badge badge-success">4</span> --}}
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('berita_acara.wp',['jenis' => 'pbb']) }}">
+                                  {{-- <i class="fa fa-desktop"></i> --}}
+                                  <p>By Wajib Pajak PBB</p>
+                                  {{-- <span class="badge badge-success">4</span> --}}
+                              </a>
+                          </li>
+                        @endif
                     </ul>
                 </div>
             </div>

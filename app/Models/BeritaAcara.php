@@ -23,12 +23,13 @@ class BeritaAcara extends Model
     {
         return $this->hasOne(WajibPajak::class,'id','id_wajib_pajak');
     }
-    public function pegawai_1()
+    public function pegawaiSatu()
     {
-        return $this->hasOne(Pegawai::class,'id','pegawai1');
+        return $this->belongsTo(Pegawai::class, 'pegawai1');
     }
-    public function pegawai_2()
+
+    public function pegawaiDua()
     {
-        return $this->hasOne(Pegawai::class,'id','pegawai2');
+        return $this->belongsTo(Pegawai::class, 'pegawai2');
     }
 }
