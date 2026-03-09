@@ -201,14 +201,22 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="https://wa.me/{{ $item->telp }}?text={{ urlencode('Berita Acara Anda Disini http://127.0.0.1:8000/berita_acara/ba_pdf/'.$item->id) }}"
-                                                target="_blank"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li>
+                                        {{-- <li><a class="dropdown-item" href="https://wa.me/{{ $item->telp }}?text={{ urlencode('Berita Acara Anda Disini http://127.0.0.1:8000/berita_acara/ba_pdf/'.$item->id) }}"
+                                                target="_blank"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li> --}}
+                                        <li>
+                                            <a class="dropdown-item" 
+                                            href="{{ $item->file_berita_acara 
+                                                        ? asset('storage/' . $item->file_berita_acara) 
+                                                        : 'https://wa.me/' . $item->telp . '?text=' . urlencode('Berita Acara Anda Disini http://127.0.0.1:8000/berita_acara/ba_pdf/' . $item->id) }}" 
+                                            target="_blank">
+                                                <i class="bi bi-whatsapp"></i> Whatsapp
+                                            </a>
+                                        </li>
                                         <li><a class="dropdown-item"
-                                                href="{{ $item->file_berita_acara ? asset($item->file_berita_acara) : route('berita_acara.ba_pdf', $item->id) }}"
+                                                href="{{ $item->file_berita_acara ? asset('storage/' . $item->file_berita_acara) : route('berita_acara.ba_pdf', $item->id) }}"
                                                 target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>
                                         </li>
-                                        <li><a class="dropdown-item" href="{{ route('berita_acara.ba_pdf', $item->id) }}"
-                                                target="_blank"> <i class="bi bi-pencil"></i> Edit</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('berita_acara.edit', $item->id) }}"> <i class="bi bi-pencil"></i> Edit</a></li>
                                         <li>
                                             <form method="POST" action="#">
                                                 @csrf

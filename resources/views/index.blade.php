@@ -208,7 +208,6 @@
                   </ul>
                 </div>
               </li> --}}
-
                         <li class="nav-item">
                             <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}">
                                 {{-- <i class="fa fa-desktop"></i> --}}
@@ -223,28 +222,28 @@
                                 {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
-                        @if(auth()->user()->role === 'admin')
-                          <li class="nav-item">
-                              <a href="{{ route('berita_acara.petugas') }}">
-                                  {{-- <i class="fa fa-desktop"></i> --}}
-                                  <p>By Nama Petugas</p>
-                                  {{-- <span class="badge badge-success">4</span> --}}
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('berita_acara.wp',['jenis' => 'pbjt']) }}">
-                                  {{-- <i class="fa fa-desktop"></i> --}}
-                                  <p>By Wajib Pajak PBJT</p>
-                                  {{-- <span class="badge badge-success">4</span> --}}
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('berita_acara.wp',['jenis' => 'pbb']) }}">
-                                  {{-- <i class="fa fa-desktop"></i> --}}
-                                  <p>By Wajib Pajak PBB</p>
-                                  {{-- <span class="badge badge-success">4</span> --}}
-                              </a>
-                          </li>
+                        @if (auth()->user()->role === 'admin')
+                            <li class="nav-item">
+                                <a href="{{ route('berita_acara.petugas') }}">
+                                    {{-- <i class="fa fa-desktop"></i> --}}
+                                    <p>By Nama Petugas</p>
+                                    {{-- <span class="badge badge-success">4</span> --}}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('berita_acara.wp', ['jenis' => 'pbjt']) }}">
+                                    {{-- <i class="fa fa-desktop"></i> --}}
+                                    <p>By Wajib Pajak PBJT</p>
+                                    {{-- <span class="badge badge-success">4</span> --}}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('berita_acara.wp', ['jenis' => 'pbb']) }}">
+                                    {{-- <i class="fa fa-desktop"></i> --}}
+                                    <p>By Wajib Pajak PBB</p>
+                                    {{-- <span class="badge badge-success">4</span> --}}
+                                </a>
+                            </li>
                         @endif
                     </ul>
                 </div>
@@ -587,7 +586,8 @@
                                                 <div class="u-text">
                                                     <h4>UPTB Wiyung</h4>
                                                     <p class="text-muted">hello@example.com</p>
-                                                    <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View
+                                                    <a href="profile.html"
+                                                        class="btn btn-xs btn-secondary btn-sm">View
                                                         Profile</a>
                                                 </div>
                                             </div>
@@ -634,26 +634,69 @@
                     @if (Route::current()->getName() == 'dashboard')
                         <div class="card p-3">
                             <h1>Main Menu</h1>
+                            @if (auth()->user()->role != 'admin')
+                                <div class="row p-3">
+                                    <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
+                                        <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}"
+                                            class="text-white text-decoration-none">
+                                            <h2 class="text-white">Berita Acara PBJT</h2>
+                                        </a>
+                                    </div>
+                                    <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
+                                        <a href="{{ route('berita_acara', ['jenis' => 'pbb']) }}"
+                                            class="text-white text-decoration-none">
+                                            <h2 class="text-white">Berita Acara PBB</h2>
+                                        </a>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="row row-card-no-pd shadow">
+                                    <div class="col-sm-12 col-md-12 col-xl-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h1><b>Berita Acara Hari ini</b></h1>
+                                                    </div>
+                                                    <h1 class="text-info fw-bold">{{ $todayCount }}</h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-xl-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h1><b>Berita Acara Minggu ini</b></h1>
+                                                    </div>
+                                                    <h1 class="text-success fw-bold">{{ $thisWeekCount }}</h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-xl-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h1><b>Berita Acara Bulan ini</b></h1>
+                                                    </div>
+                                                    <h1 class="text-danger fw-bold">{{ $thisMonthCount }}</h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                             <div class="row p-3">
-                                <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
-                                    <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}"
-                                        class="text-white text-decoration-none">
-                                        <h2 class="text-white">Berita Acara PBJT</h2>
-                                    </a>
-                                </div>
-                                <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
-                                    <a href="{{ route('berita_acara', ['jenis' => 'pbb']) }}"
-                                        class="text-white text-decoration-none">
-                                        <h2 class="text-white">Berita Acara PBB</h2>
-                                    </a>
-                                </div>
-                            </div>
-                            {{-- <form method="POST" action="{{ route('read.csv') }}" enctype="multipart/form-data">
-                                @csrf
-                                <input type="file" name="file" accept=".csv" required>
-                                <button type="submit">Upload</button>
-                            </form> --}}
 
+                                @if (isset($months) && isset($counts))
+                                    <div class="col-lg-6 col-md-6 col-sm-12 card shadow">
+                                        <canvas id="beritaChart"></canvas>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     @endif
                     @yield('content')
@@ -671,6 +714,63 @@
 
         <!-- End Custom template -->
     </div>
+    @if (isset($months) && isset($counts))
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('beritaChart').getContext('2d');
+
+            const months = @json($months);
+            const counts = @json($counts);
+
+            // Only bright pink and blue with transparency
+            const colors = [
+                'rgba(255, 99, 132, 0.6)', // bright pink
+                'rgba(54, 162, 235, 0.6)' // bright blue
+            ];
+
+            const borderColors = [
+                'rgba(255, 99, 132, 1)', // bright pink full opacity
+                'rgba(54, 162, 235, 1)' // bright blue full opacity
+            ];
+
+            // Assign colors alternating
+            const backgroundColors = months.map((_, index) => colors[index % 2]);
+            const borderColorsMapped = months.map((_, index) => borderColors[index % 2]);
+
+            const beritaChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Berita Acara per Bulan',
+                        data: counts,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColorsMapped,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Jumlah Berita Acara per Bulan'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stepSize: 1
+                        }
+                    }
+                }
+            });
+        </script>
+    @endif
     <!--   Core JS Files   -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/popper.min.js') }}"></script>

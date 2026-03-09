@@ -95,21 +95,34 @@ class BeritaAcaraController extends Controller
     public function approval_wajib_pajak(Request $request)
     {
         $validated = $request->validate([
+            'id' => ['nullable', 'string', 'max:255', new SafeInput],
             'nop' => ['required', 'string', 'max:255', new SafeInput],
             'nama' => ['required', 'string', 'max:255', new SafeInput],
             'alamat' => ['required', 'string', 'max:255', new SafeInput],
             'nama_responden' => ['required', 'string', 'max:255', new SafeInput],
             'telp' => ['required', 'string', 'max:255', new SafeInput],
             'narasi' => ['required', 'string', new SafeInput],
-            'pegawai1' => ['required', 'integer'],
-            'pegawai2' => ['nullable', 'integer'],
+            'pegawai1' => ['required', 'integer', new SafeInput],
+            'pegawai2' => ['nullable', 'integer', new SafeInput],
         ]);
+        $berita = null;
 
+        if (isset($validated['id'])) {
+            $id = $validated['id'];
+            $berita = BeritaAcara::find($id);
+        }
         $nop = $validated['nop'];
         $nama = $validated['nama'];
         $alamat = $validated['alamat'];
         $nama_responden = $validated['nama_responden'];
         $telp = $validated['telp'];
+        if (!str_starts_with($telp, '62')) {
+            if (substr($telp, 0, 1) === '0') {
+                $telp = '62' . substr($telp, 1);
+            } else {
+                $telp = '62' . $telp;
+            }
+        }
         $narasi = $validated['narasi'];
         $pegawai1_id = $validated['pegawai1'];
         if (isset($validated['pegawai2'])) {
@@ -124,8 +137,22 @@ class BeritaAcaraController extends Controller
             $pegawai2 = null;
         }
 
-        return view('berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2'));
+        return view('berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2', 'berita'));
     }
+
+    public function edit($id)
+    {
+        $berita = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])->findOrFail($id);
+
+        $pegawai = Pegawai::orderBy('nama_pegawai', 'asc')->get();
+
+        $nop = $berita->wajibPajak->nop;
+        $nama = $berita->wajibPajak->nama;
+        $alamat = $berita->wajibPajak->alamat;
+
+        return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai', 'berita'));
+    }
+    public function update(Request $request) {}
 
 
     public function store(Request $request)
@@ -134,18 +161,20 @@ class BeritaAcaraController extends Controller
         // VALIDATION
         // ===============================
         $validated = $request->validate([
-            'nop' => ['required', 'string', 'max:255', new SafeInput],
-            'nama' => ['required', 'string', 'max:255', new SafeInput],
-            'alamat' => ['required', 'string', 'max:255', new SafeInput],
+            'id'             => ['nullable', 'integer'],
+            'nop'            => ['required', 'string', 'max:255', new SafeInput],
+            'nama'           => ['required', 'string', 'max:255', new SafeInput],
+            'alamat'         => ['required', 'string', 'max:255', new SafeInput],
             'nama_responden' => ['required', 'string', 'max:255', new SafeInput],
-            'telp' => ['required', 'string', 'max:255', new SafeInput],
-            'narasi' => ['required', 'string', new SafeInput],
-            'ttd_wajib_pajak' => ['required', 'string'],
-            'pegawai1' => ['required', 'integer'],
-            'pegawai2' => ['nullable', 'integer'],
+            'telp'           => ['required', 'string', 'max:255', new SafeInput],
+            'narasi'         => ['required', 'string', new SafeInput],
+            'ttd_wajib_pajak' => ['nullable', 'string'],
+            'pegawai1'       => ['required', 'integer'],
+            'pegawai2'       => ['nullable', 'integer'],
         ]);
+
         // ===============================
-        // AMBIL DATA WAJIB PAJAK
+        // AMBIL WAJIB PAJAK
         // ===============================
         $wajibPajak = WajibPajak::where('nop', $validated['nop'])->first();
 
@@ -156,47 +185,56 @@ class BeritaAcaraController extends Controller
         }
 
         // ===============================
-        // PROSES TANDA TANGAN
+        // PROCESS SIGNATURE (OPTIONAL)
         // ===============================
-        $base64Image = $validated['ttd_wajib_pajak'];
+        $ttdPath = null;
 
-        if (!str_starts_with($base64Image, 'data:image')) {
-            return back()->withErrors([
-                'ttd_wajib_pajak' => 'Format tanda tangan tidak valid'
-            ])->withInput();
+        if ($request->filled('ttd_wajib_pajak') && str_starts_with($request->ttd_wajib_pajak, 'data:image')) {
+
+            $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $request->ttd_wajib_pajak);
+            $imageData = base64_decode($base64Image);
+
+            if ($imageData === false) {
+                return back()->withErrors([
+                    'ttd_wajib_pajak' => 'Gagal memproses tanda tangan'
+                ])->withInput();
+            }
+
+            $fileName = 'ttd_wajib_pajak/' . time() . '_' . Str::random(8) . '.png';
+
+            Storage::disk('public')->put($fileName, $imageData);
+
+            $ttdPath = 'storage/' . $fileName;
         }
 
-        $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $base64Image);
-        $imageData = base64_decode($base64Image);
+        // ===============================
+        // PREPARE DATA
+        // ===============================
+        $data = [
+            'id_wajib_pajak' => $wajibPajak->id,
+            'telp'           => $validated['telp'],
+            'nama'           => $validated['nama_responden'],
+            'narasi'         => $validated['narasi'],
+            'pegawai1'       => $validated['pegawai1'],
+            'pegawai2'       => $validated['pegawai2'] ?? null,
+        ];
 
-        if ($imageData === false) {
-            return back()->withErrors([
-                'ttd_wajib_pajak' => 'Gagal memproses tanda tangan'
-            ])->withInput();
+        // only include signature if new one drawn
+        if ($ttdPath) {
+            $data['ttd_wajib_pajak'] = $ttdPath;
         }
 
-        // nama file
-        $fileName = 'ttd_wajib_pajak/' . time() . '_' . Str::random(8) . '.png';
-
-        Storage::disk('public')->put($fileName, $imageData);
-
-        $ttdPath = 'storage/' . $fileName;
-
         // ===============================
-        // SIMPAN KE DATABASE
+        // CREATE OR UPDATE
         // ===============================
         DB::beginTransaction();
 
         try {
-            BeritaAcara::create([
-                'id_wajib_pajak'  => $wajibPajak->id,
-                'telp'            => $validated['telp'],
-                'nama'  => $validated['nama_responden'],
-                'narasi'          => $validated['narasi'],
-                'pegawai1'        => $validated['pegawai1'],
-                'pegawai2'        => $validated['pegawai2'] ?? null,
-                'ttd_wajib_pajak' => $ttdPath,
-            ]);
+
+            BeritaAcara::updateOrCreate(
+                ['id' => $validated['id'] ?? null], // search condition
+                $data                            // update/create data
+            );
 
             DB::commit();
 
@@ -204,6 +242,7 @@ class BeritaAcaraController extends Controller
                 ->route('berita_acara', ['jenis' => $wajibPajak->jenis])
                 ->with('success', 'Berita Acara berhasil disimpan');
         } catch (\Exception $e) {
+
             DB::rollBack();
 
             return back()->withErrors([
@@ -252,14 +291,72 @@ class BeritaAcaraController extends Controller
     }
 
 
+    // public function upload(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'nop' => ['required', 'string', 'max:255', new SafeInput],
+    //         'pegawai1' => ['required', 'integer'],
+    //         'pegawai2' => ['nullable', 'integer'],
+    //     ]);
+
+    //     $wajibPajak = WajibPajak::where('nop', $validated['nop'])->first();
+
+    //     if (!$wajibPajak) {
+    //         return back()->withErrors([
+    //             'nop' => 'Wajib Pajak tidak ditemukan'
+    //         ])->withInput();
+    //     }
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         // ✅ Validation
+    //         $request->validate([
+    //             'file' => 'required|file|mimes:pdf,doc,docx|max:2048',
+    //         ]);
+
+    //         // ✅ Upload file
+    //         $file = $request->file('file');
+    //         $fileName = 'berita_acara_' . time() . '.' . $file->getClientOriginalExtension();
+
+    //         $path = $file->storeAs(
+    //             'berita_acara',
+    //             $fileName,
+    //             'public'
+    //         );
+
+    //         // ✅ Save / update database
+    //         BeritaAcara::create([
+    //             'id_wajib_pajak'  => $wajibPajak->id,
+    //             'file_berita_acara' => $path,
+    //             'pegawai1'       => $validated['pegawai1'],
+    //             'pegawai2'       => $validated['pegawai2'] ?? null,
+    //         ]);
+
+    //         DB::commit();
+
+    //         // ✅ SUCCESS RETURN (as requested)
+    //         return redirect()
+    //             ->route('berita_acara', ['jenis' => $wajibPajak->jenis])
+    //             ->with('success', 'Berita Acara berhasil disimpan');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+
+    //         return back()->with('error', 'Gagal menyimpan Berita Acara: ' . $e->getMessage())
+    //             ->withInput();
+    //     }
+    // }
     public function upload(Request $request)
     {
         $validated = $request->validate([
             'nop' => ['required', 'string', 'max:255', new SafeInput],
+            'pegawai1' => ['required', 'integer'],
+            'pegawai2' => ['nullable', 'integer'],
+            'id' => ['nullable', 'integer', 'exists:berita_acara,id'], // optional for update
         ]);
 
+        // Get Wajib Pajak
         $wajibPajak = WajibPajak::where('nop', $validated['nop'])->first();
-
         if (!$wajibPajak) {
             return back()->withErrors([
                 'nop' => 'Wajib Pajak tidak ditemukan'
@@ -269,39 +366,54 @@ class BeritaAcaraController extends Controller
         DB::beginTransaction();
 
         try {
-            // ✅ Validation
-            $request->validate([
-                'file' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            ]);
+            // Validate file only if uploaded
+            if ($request->hasFile('file')) {
+                $request->validate([
+                    'file' => 'file|mimes:pdf,doc,docx|max:2048',
+                ]);
 
-            // ✅ Upload file
-            $file = $request->file('file');
-            $fileName = 'berita_acara_' . time() . '.' . $file->getClientOriginalExtension();
+                $file = $request->file('file');
+                $fileName = 'berita_acara_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('berita_acara', $fileName, 'public');
+            }
 
-            $path = $file->storeAs(
-                'berita_acara',
-                $fileName,
-                'public'
-            );
+            // Check if updating
+            if (isset($validated['id'])) {
+                $berita = BeritaAcara::findOrFail($validated['id']);
 
-            // ✅ Save / update database
-            BeritaAcara::create([
-                'id_wajib_pajak'  => $wajibPajak->id,
-                'file_berita_acara' => $path,
-            ]);
+                // Update file if uploaded
+                if (isset($path)) {
+                    // Delete old file
+                    if ($berita->file_berita_acara && Storage::disk('public')->exists($berita->file_berita_acara)) {
+                        Storage::disk('public')->delete($berita->file_berita_acara);
+                    }
+                    $berita->file_berita_acara = $path;
+                }
+
+                $berita->pegawai1 = $validated['pegawai1'];
+                $berita->pegawai2 = $validated['pegawai2'] ?? null;
+
+                $berita->save();
+            } else {
+                // Create new
+                BeritaAcara::create([
+                    'id_wajib_pajak' => $wajibPajak->id,
+                    'file_berita_acara' => $path ?? null,
+                    'pegawai1' => $validated['pegawai1'],
+                    'pegawai2' => $validated['pegawai2'] ?? null,
+                ]);
+            }
 
             DB::commit();
 
-            // ✅ SUCCESS RETURN (as requested)
             return redirect()
                 ->route('berita_acara', ['jenis' => $wajibPajak->jenis])
-                ->with('success', 'Berita Acara berhasil disimpan');
+                ->with('success', isset($validated['id']) ? 'Berita Acara berhasil diupdate' : 'Berita Acara berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return back()->withErrors([
-                'error' => 'Gagal menyimpan Berita Acara: ' . $e->getMessage()
-            ])->withInput();
+            return back()->with('error', 'Gagal menyimpan Berita Acara: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -381,8 +493,8 @@ class BeritaAcaraController extends Controller
             ->whereHas('wajibPajak', function ($query) use ($jenis) {
                 $query->when(
                     $jenis === 'pbb',
-                    fn ($q) => $q->where('jenis', 'pbb'),
-                    fn ($q) => $q->where('jenis', '!=', 'pbb')
+                    fn($q) => $q->where('jenis', 'pbb'),
+                    fn($q) => $q->where('jenis', '!=', 'pbb')
                 );
             })
             ->whereMonth('created_at', $bulan)

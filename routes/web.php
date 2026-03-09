@@ -3,14 +3,16 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BeritaAcaraController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
 
     // Dashboard main page
-    Route::get('/', function () {
-        return view('index');
-    })->name('dashboard');
+    // Route::get('/', function () {
+    //     return view('index');
+    // })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/berita_acara/search', [BeritaAcaraController::class, 'search'])->name('berita_acara.search');
     Route::get('/berita_acara/{jenis}', [BeritaAcaraController::class, 'index'])->name('berita_acara');
@@ -19,8 +21,18 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
     Route::get('/berita_acara/upload-csv', function () {
         return view('berita_acara.upload_csv');
     })->name('berita_acara.upload_csv');
-    Route::post('/berita_acara/approval_wajib_pajak', [BeritaAcaraController::class, 'approval_wajib_pajak'])->name('berita_acara.approval_wajib_pajak');
+    // Route::post('/berita_acara/approval_wajib_pajak', [BeritaAcaraController::class, 'approval_wajib_pajak'])->name('berita_acara.approval_wajib_pajak');
+    Route::post('/berita_acara/approval_wajib_pajak', 
+                [BeritaAcaraController::class, 'approval_wajib_pajak']
+            )->name('berita_acara.approval_wajib_pajak');
+
+            Route::put('/berita_acara/approval_wajib_pajak', 
+                [BeritaAcaraController::class, 'approval_wajib_pajak']
+            );
     Route::post('/berita_acara/store', [BeritaAcaraController::class, 'store'])->name('berita_acara.store');
+    Route::get('/berita_acara/edit/{id}', [BeritaAcaraController::class, 'edit'])->name('berita_acara.edit');
+    // Route::post('/berita_acara/update_approval_wajib_pajak', [BeritaAcaraController::class, 'update_approval_wajib_pajak'])->name('berita_acara.update_approval_wajib_pajak');
+    Route::post('/berita_acara/update', [BeritaAcaraController::class, 'update'])->name('berita_acara.update');
     Route::get('/berita_acara/ba_pdf/{id}', [BeritaAcaraController::class, 'ba_pdf'])->name('berita_acara.ba_pdf');
     // Route::post('/readCsv', [BeritaAcaraController::class, 'readCsv'])->name('read.csv');
 
