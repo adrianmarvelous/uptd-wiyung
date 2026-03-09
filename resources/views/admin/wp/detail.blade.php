@@ -3,7 +3,7 @@
 @section('content')
     <div class="card p-3">
         <h1>
-            Detail {{ $petugas->nama_pegawai }} —
+            Detail {{ $wp->nama }} —
             {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y') }}
         </h1>
 

@@ -26,9 +26,9 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
                 [BeritaAcaraController::class, 'approval_wajib_pajak']
             )->name('berita_acara.approval_wajib_pajak');
 
-            Route::put('/berita_acara/approval_wajib_pajak', 
-                [BeritaAcaraController::class, 'approval_wajib_pajak']
-            );
+    Route::put('/berita_acara/approval_wajib_pajak', 
+        [BeritaAcaraController::class, 'approval_wajib_pajak']
+    );
     Route::post('/berita_acara/store', [BeritaAcaraController::class, 'store'])->name('berita_acara.store');
     Route::get('/berita_acara/edit/{id}', [BeritaAcaraController::class, 'edit'])->name('berita_acara.edit');
     // Route::post('/berita_acara/update_approval_wajib_pajak', [BeritaAcaraController::class, 'update_approval_wajib_pajak'])->name('berita_acara.update_approval_wajib_pajak');
@@ -44,7 +44,7 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
         Route::get('/berita_acara_petugas',[BeritaAcaraController::class, 'petugas'])->name('berita_acara.petugas');
         Route::get('/berita_acara_petugas/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_petugas'])->name('berita_acara.petugas.detail');
         Route::get('/berita_acara_wp/{jenis}',[BeritaAcaraController::class, 'wp'])->name('berita_acara.wp');
-        Route::get('/berita_acara_wp/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_pwp'])->name('berita_acara.wp.detail');
+        Route::get('/berita_acara_wp/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_pw'])->name('berita_acara.wp.detail');
     });
 });
 

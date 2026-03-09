@@ -45,9 +45,9 @@
                         <tr>
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $item->wajibPajak->nama }}</td>
-                            {{-- <td>{{ $item->jumlah }}</td> --}}
+                            <td>{{ $item->total }}</td>
                             <td>
-                                {{-- <a href="{{ route('berita_acara.wp.detail', ['jenis' => $jenis, 'id' => $item->id]) }}" class="btn btn-sm btn-primary">Detail</a> --}}
+                                <a href="{{ route('berita_acara.wp.detail', ['id' => $item->id_wajib_pajak,'bulan' => $currentBulan,'tahun' => $currentTahun]) }}" class="btn btn-sm btn-primary">Detail</a>
                             </td>
                         </tr>
                     @endforeach

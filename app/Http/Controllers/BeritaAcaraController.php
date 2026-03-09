@@ -489,6 +489,7 @@ class BeritaAcaraController extends Controller
         $tahun = $request->tahun ?? Carbon::now()->year;
 
         $jenis_ = $jenis;
+
         $data = BeritaAcara::with('wajibPajak')
             ->whereHas('wajibPajak', function ($query) use ($jenis) {
                 $query->when(
@@ -499,14 +500,25 @@ class BeritaAcaraController extends Controller
             })
             ->whereMonth('created_at', $bulan)
             ->whereYear('created_at', $tahun)
-            ->orderBy('created_at', 'desc')
-            ->distinct()
+            ->select('id_wajib_pajak', DB::raw('COUNT(*) as total'))
+            ->groupBy('id_wajib_pajak')
             ->get();
 
         $jenis = $jenis_;
         // dd($data);
 
         return view('admin.wp.index', compact('data', 'jenis', 'bulan', 'tahun'));
+    }
+    public function detail_pw($id,$bulan,$tahun)
+    {
+        $wp = WajibPajak::find($id);
+        $data = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])
+                                    ->where('id_wajib_pajak',$id)
+                                    ->whereMonth('created_at',$bulan)
+                                    ->whereYear('created_at',$tahun)
+                                    ->get();
+                                    // dd($beritaAcara);
+        return view('admin.wp.detail', compact('wp','data','bulan','tahun'));
     }
     // public function readCsv(Request $request)
     // {
