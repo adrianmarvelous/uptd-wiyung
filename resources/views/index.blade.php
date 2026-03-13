@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>UPTD Wiyung</title>
+    <title>UPTB Wiyung</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
     <link rel="icon" href="{{ asset('templetes/kaiadmin-lite/assets/img/kaiadmin/favicon.ico') }}"
         type="image/x-icon" />
@@ -80,12 +80,12 @@
 
     <div class="wrapper">
         <!-- Sidebar -->
-        <div class="sidebar sidebar-style-2" data-background-color="dark">
+        <div class="sidebar sidebar-style-2 text-white"  data-background-color="dark">
             <div class="sidebar-logo">
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
-                    <a href="" class="logo text-white">
-                        UPTD Wiyung
+                    <a href="/" class="logo text-white">
+                        UPTB Wiyung
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -101,7 +101,7 @@
                 </div>
                 <!-- End Logo Header -->
             </div>
-            <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-wrapper scrollbar scrollbar-inner text-whi">
                 <div class="sidebar-content">
                     <ul class="nav nav-secondary">
                         {{-- <li class="nav-item">
@@ -129,7 +129,7 @@
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <h4 class="text-section">Main Menu</h4>
+                            <h4 class="text-section text-white">Main Menu</h4>
                         </li>
                         {{-- <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
@@ -211,14 +211,14 @@
                         <li class="nav-item">
                             <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}">
                                 {{-- <i class="fa fa-desktop"></i> --}}
-                                <p>Berita Acara PBJT</p>
+                                <p class="text-white">Berita Acara PBJT</p>
                                 {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('berita_acara', ['jenis' => 'pbb']) }}">
                                 {{-- <i class="fa fa-desktop"></i> --}}
-                                <p>Berita Acara PBB</p>
+                                <p class="text-white">Berita Acara PBB</p>
                                 {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
@@ -226,21 +226,21 @@
                             <li class="nav-item">
                                 <a href="{{ route('berita_acara.petugas') }}">
                                     {{-- <i class="fa fa-desktop"></i> --}}
-                                    <p>By Nama Petugas</p>
+                                    <p class="text-white">By Nama Petugas</p>
                                     {{-- <span class="badge badge-success">4</span> --}}
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('berita_acara.wp', ['jenis' => 'pbjt']) }}">
                                     {{-- <i class="fa fa-desktop"></i> --}}
-                                    <p>By Wajib Pajak PBJT</p>
+                                    <p class="text-white">By Wajib Pajak PBJT</p>
                                     {{-- <span class="badge badge-success">4</span> --}}
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('berita_acara.wp', ['jenis' => 'pbb']) }}">
                                     {{-- <i class="fa fa-desktop"></i> --}}
-                                    <p>By Wajib Pajak PBB</p>
+                                    <p class="text-white">By Wajib Pajak PBB</p>
                                     {{-- <span class="badge badge-success">4</span> --}}
                                 </a>
                             </li>

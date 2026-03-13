@@ -520,6 +520,13 @@ class BeritaAcaraController extends Controller
                                     // dd($beritaAcara);
         return view('admin.wp.detail', compact('wp','data','bulan','tahun'));
     }
+    public function change_char()
+    {
+        DB::table('wajib_pajak')
+        ->update([
+            'nop' => DB::raw("REPLACE(nop, '-', '.')")
+        ]);
+    }
     // public function readCsv(Request $request)
     // {
     //     $request->validate([

@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
 
     Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/berita_acara_petugas',[BeritaAcaraController::class, 'petugas'])->name('berita_acara.petugas');
+        Route::get('/change_char',[BeritaAcaraController::class, 'change_char'])->name('berita_acara.change_char');
         Route::get('/berita_acara_petugas/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_petugas'])->name('berita_acara.petugas.detail');
         Route::get('/berita_acara_wp/{jenis}',[BeritaAcaraController::class, 'wp'])->name('berita_acara.wp');
         Route::get('/berita_acara_wp/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_pw'])->name('berita_acara.wp.detail');
