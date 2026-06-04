@@ -89,7 +89,8 @@ class BeritaAcaraController extends Controller
         $pegawai = Pegawai::orderBy('nama_pegawai', 'asc')->get();
 
 
-        return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai'));
+        $berita = null;
+        return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai', 'berita'));
     }
 
     public function approval_wajib_pajak(Request $request)
@@ -125,17 +126,9 @@ class BeritaAcaraController extends Controller
         }
         $narasi = $validated['narasi'];
         $pegawai1_id = $validated['pegawai1'];
-        if (isset($validated['pegawai2'])) {
-            $pegawai2_id = $validated['pegawai2'];
-        } else {
-            $pegawai2_id = null;
-        }
+        $pegawai2_id = !empty($validated['pegawai2']) ? $validated['pegawai2'] : null;
         $pegawai1 = Pegawai::find($pegawai1_id);
-        if ($pegawai2_id) {
-            $pegawai2 = Pegawai::find($pegawai2_id);
-        } else {
-            $pegawai2 = null;
-        }
+        $pegawai2 = $pegawai2_id ? Pegawai::find($pegawai2_id) : null;
 
         return view('berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2', 'berita'));
     }
@@ -152,7 +145,12 @@ class BeritaAcaraController extends Controller
 
         return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai', 'berita'));
     }
-    public function update(Request $request) {}
+    public function update(Request $request)
+    {
+        return redirect()
+            ->route('dashboard')
+            ->with('error', 'Fitur update belum tersedia, gunakan tombol Edit pada daftar Berita Acara');
+    }
 
 
     public function store(Request $request)
@@ -216,7 +214,7 @@ class BeritaAcaraController extends Controller
             'nama'           => $validated['nama_responden'],
             'narasi'         => $validated['narasi'],
             'pegawai1'       => $validated['pegawai1'],
-            'pegawai2'       => $validated['pegawai2'] ?? null,
+            'pegawai2'       => !empty($validated['pegawai2']) ? $validated['pegawai2'] : null,
         ];
 
         // only include signature if new one drawn
@@ -391,16 +389,23 @@ class BeritaAcaraController extends Controller
                 }
 
                 $berita->pegawai1 = $validated['pegawai1'];
-                $berita->pegawai2 = $validated['pegawai2'] ?? null;
+                $berita->pegawai2 = !empty($validated['pegawai2']) ? $validated['pegawai2'] : null;
 
                 $berita->save();
             } else {
-                // Create new
+                // Create new — require file for new records
+                if (!isset($path)) {
+                    DB::rollBack();
+                    return back()->withErrors([
+                        'file' => 'File Berita Acara wajib diupload untuk data baru'
+                    ])->withInput();
+                }
                 BeritaAcara::create([
                     'id_wajib_pajak' => $wajibPajak->id,
-                    'file_berita_acara' => $path ?? null,
+                    'file_berita_acara' => $path,
+                    'narasi' => '-',
                     'pegawai1' => $validated['pegawai1'],
-                    'pegawai2' => $validated['pegawai2'] ?? null,
+                    'pegawai2' => !empty($validated['pegawai2']) ? $validated['pegawai2'] : null,
                 ]);
             }
 

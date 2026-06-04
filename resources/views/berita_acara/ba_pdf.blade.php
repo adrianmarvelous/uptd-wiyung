@@ -106,45 +106,46 @@
             <td style="text-align: center">Petugas Pemeriksa</td>
         </tr>
         <tr>
-            <td style="text-align: center" rowspan="3">
+            <td style="text-align: center; vertical-align: top;">
                 <img src="{{ public_path($data->ttd_wajib_pajak) }}" width="200">
             </td>
-            <td>
-                <span>1. {{ optional($data->pegawaiSatu)->nama_pegawai ?? '-' }}</span>
-                {{-- <span><img src="{{ $base64 }}" width="120"></span>
-                <span> --}}
-            </td>
-            <td rowspan="2">
-                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawaiSatu->nip_nik.'.png'))) }}" width="70">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                NIP. {{ optional($data->pegawaiSatu)->nip_nik ?? '-' }}
-            </td>
-        </tr>
-
-        <tr>
-            <td>
-                @if ($data->pegawaiDua)
-                        2. {{ optional($data->pegawaiDua)->nama_pegawai ?? '-' }}
-                @endif
-            </td>
-            <td rowspan="2">
-                @if ($data->pegawaiDua)
-                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawaiDua->nip_nik.'.png'))) }}" width="70">
-                @endif
+            <td style="vertical-align: top;">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <span>1. {{ optional($data->pegawaiSatu)->nama_pegawai ?? '-' }}</span>
+                        </td>
+                        <td rowspan="2" style="text-align: center;">
+                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawaiSatu->nip_nik.'.png'))) }}" width="70">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            NIP. {{ optional($data->pegawaiSatu)->nip_nik ?? '-' }}
+                        </td>
+                    </tr>
+                    @if ($data->pegawaiDua)
+                    <tr>
+                        <td>
+                            2. {{ optional($data->pegawaiDua)->nama_pegawai ?? '-' }}
+                        </td>
+                        <td rowspan="2" style="text-align: center;">
+                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawaiDua->nip_nik.'.png'))) }}" width="70">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            NIP. {{ optional($data->pegawaiDua)->nip_nik ?? '-' }}
+                        </td>
+                    </tr>
+                    @endif
+                </table>
             </td>
         </tr>
         <tr>
             <td style="text-align: center">{{ $data->nama }}</td>
-            <td>
-                @if ($data->pegawaiDua)
-                    NIP. {{ optional($data->pegawaiDua)->nip_nik ?? '-' }}
-                @endif
-            </td>
+            <td></td>
         </tr>
-
     </table>
 
 </body>

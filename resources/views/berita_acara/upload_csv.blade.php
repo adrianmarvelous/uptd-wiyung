@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('index')
 
 @section('content')
-<div class="container py-6">
+<div class="card p-3">
     <h2 class="mb-4">Upload CSV</h2>
 
     @if ($errors->any())
@@ -14,7 +14,7 @@
         </div>
     @endif
 
-    <form action="{{ route('read.csv') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('berita_acara.upload_csv') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group mb-3">
             <label for="file">CSV file</label>

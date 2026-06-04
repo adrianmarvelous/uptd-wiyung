@@ -47,7 +47,7 @@
                             <td>{{ $item->nama_pegawai }}</td>
                             <td>{{ $item->jumlah_berita_acara }}</td>
                             <td><a class="btn btn-primary"
-                                    href="{{ route('berita_acara.petugas.detail', ['id' => $item->id, 'bulan' => now()->month, 'tahun' => now()->year]) }}">Detail</a>
+                                    href="{{ route('berita_acara.petugas.detail', ['id' => $item->id, 'bulan' => $currentBulan, 'tahun' => $currentTahun]) }}">Detail</a>
                             </td>
                         </tr>
                     @endforeach

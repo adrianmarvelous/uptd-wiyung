@@ -205,9 +205,7 @@
                                                 target="_blank"> <i class="bi bi-whatsapp"></i> Whatsapp</a></li> --}}
                                         <li>
                                             <a class="dropdown-item" 
-                                            href="{{ $item->file_berita_acara 
-                                                        ? asset('storage/' . $item->file_berita_acara) 
-                                                        : 'https://wa.me/' . $item->telp . '?text=' . urlencode('Berita Acara Anda Disini http://127.0.0.1:8000/berita_acara/ba_pdf/' . $item->id) }}" 
+                                            href="{{ 'https://wa.me/' . $item->telp . '?text=' . urlencode('Berita Acara Anda Disini ' . ($item->file_berita_acara ? url('storage/' . $item->file_berita_acara) : route('berita_acara.ba_pdf', $item->id))) }}" 
                                             target="_blank">
                                                 <i class="bi bi-whatsapp"></i> Whatsapp
                                             </a>

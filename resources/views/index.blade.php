@@ -40,6 +40,11 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('templetes/kaiadmin-lite/assets/css/demo.css') }}" />
+    <style>
+        .bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-gradient-success { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .rounded-4 { border-radius: 1rem !important; }
+    </style>
 </head>
 
 <body>
@@ -566,10 +571,10 @@
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
-                                    <div class="avatar-sm">
+                                    {{-- <div class="avatar-sm">
                                         <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}"
                                             alt="..." class="avatar-img rounded-circle" />
-                                    </div>
+                                    </div> --}}
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
                                         <span class="fw-bold">UPTB Wiyung</span>
@@ -579,7 +584,7 @@
                                     <div class="dropdown-user-scroll scrollbar-outer">
                                         <li>
                                             <div class="user-box">
-                                                <div class="avatar-lg">
+                                                {{-- <div class="avatar-lg">
                                                     <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}"
                                                         alt="image profile" class="avatar-img rounded" />
                                                 </div>
@@ -589,17 +594,17 @@
                                                     <a href="profile.html"
                                                         class="btn btn-xs btn-secondary btn-sm">View
                                                         Profile</a>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </li>
                                         <li>
-                                            <div class="dropdown-divider"></div>
+                                            {{-- <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#">My Profile</a>
                                             <a class="dropdown-item" href="#">My Balance</a>
                                             <a class="dropdown-item" href="#">Inbox</a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#">Account Setting</a>
-                                            <div class="dropdown-divider"></div>
+                                            <div class="dropdown-divider"></div> --}}
 
                                             <form action="{{ route('logout') }}" method="POST">
                                                 @csrf
@@ -632,72 +637,216 @@
             </div> --}}
 
                     @if (Route::current()->getName() == 'dashboard')
-                        <div class="card p-3">
-                            <h1>Main Menu</h1>
-                            @if (auth()->user()->role != 'admin')
-                                <div class="row p-3">
-                                    <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
+                        @if (auth()->user()->role != 'admin')
+                            <div class="card p-3">
+                                <h1 class="mb-4">Main Menu</h1>
+                                <div class="row justify-content-center g-4">
+                                    <div class="col-lg-5 col-md-6">
                                         <a href="{{ route('berita_acara', ['jenis' => 'OP']) }}"
                                             class="text-white text-decoration-none">
-                                            <h2 class="text-white">Berita Acara PBJT</h2>
+                                            <div class="card bg-gradient-primary text-white shadow-lg border-0 rounded-4 h-100">
+                                                <div class="card-body text-center py-5">
+                                                    <i class="bi bi-file-earmark-text" style="font-size: 3rem;"></i>
+                                                    <h3 class="text-white mt-3 fw-bold">Berita Acara PBJT</h3>
+                                                    <p class="opacity-75 mb-0">Total: {{ $totalAll ?? 0 }}</p>
+                                                </div>
+                                            </div>
                                         </a>
                                     </div>
-                                    <div class="col-lg-3 card shadow text-center btn btn-primary m-3">
+                                    <div class="col-lg-5 col-md-6">
                                         <a href="{{ route('berita_acara', ['jenis' => 'pbb']) }}"
                                             class="text-white text-decoration-none">
-                                            <h2 class="text-white">Berita Acara PBB</h2>
+                                            <div class="card bg-gradient-success text-white shadow-lg border-0 rounded-4 h-100">
+                                                <div class="card-body text-center py-5">
+                                                    <i class="bi bi-building" style="font-size: 3rem;"></i>
+                                                    <h3 class="text-white mt-3 fw-bold">Berita Acara PBB</h3>
+                                                    <p class="opacity-75 mb-0">Total: {{ $totalAll ?? 0 }}</p>
+                                                </div>
+                                            </div>
                                         </a>
                                     </div>
                                 </div>
-                            @else
-                                <div class="row row-card-no-pd shadow">
-                                    <div class="col-sm-12 col-md-12 col-xl-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between">
-                                                    <div>
-                                                        <h1><b>Berita Acara Hari ini</b></h1>
-                                                    </div>
-                                                    <h1 class="text-info fw-bold">{{ $todayCount }}</h1>
-                                                </div>
+                            </div>
+                        @else
+                            {{-- STAT CARDS ROW --}}
+                            <div class="row g-3 mb-4">
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        <div class="card-body text-white d-flex align-items-center justify-content-between p-4">
+                                            <div>
+                                                <h6 class="text-white-50 mb-1">Hari Ini</h6>
+                                                <h2 class="text-white fw-bold mb-0">{{ $todayCount }}</h2>
+                                                <small class="text-white-50">Berita Acara</small>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12 col-xl-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between">
-                                                    <div>
-                                                        <h1><b>Berita Acara Minggu ini</b></h1>
-                                                    </div>
-                                                    <h1 class="text-success fw-bold">{{ $thisWeekCount }}</h1>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12 col-xl-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between">
-                                                    <div>
-                                                        <h1><b>Berita Acara Bulan ini</b></h1>
-                                                    </div>
-                                                    <h1 class="text-danger fw-bold">{{ $thisMonthCount }}</h1>
-                                                </div>
-                                            </div>
+                                            <i class="bi bi-calendar-check" style="font-size: 3rem; opacity: 0.5;"></i>
                                         </div>
                                     </div>
                                 </div>
-                            @endif
-                            <div class="row p-3">
-
-                                @if (isset($months) && isset($counts))
-                                    <div class="col-lg-6 col-md-6 col-sm-12 card shadow">
-                                        <canvas id="beritaChart"></canvas>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                        <div class="card-body text-white d-flex align-items-center justify-content-between p-4">
+                                            <div>
+                                                <h6 class="text-white-50 mb-1">Minggu Ini</h6>
+                                                <h2 class="text-white fw-bold mb-0">{{ $thisWeekCount }}</h2>
+                                                <small class="text-white-50">Berita Acara</small>
+                                            </div>
+                                            <i class="bi bi-calendar-week" style="font-size: 3rem; opacity: 0.5;"></i>
+                                        </div>
                                     </div>
-                                @endif
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                        <div class="card-body text-white d-flex align-items-center justify-content-between p-4">
+                                            <div>
+                                                <h6 class="text-white-50 mb-1">Bulan Ini</h6>
+                                                <h2 class="text-white fw-bold mb-0">{{ $thisMonthCount }}</h2>
+                                                <small class="text-white-50">Berita Acara</small>
+                                            </div>
+                                            <i class="bi bi-calendar-month" style="font-size: 3rem; opacity: 0.5;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                                        <div class="card-body text-white d-flex align-items-center justify-content-between p-4">
+                                            <div>
+                                                <h6 class="text-white-50 mb-1">Total</h6>
+                                                <h2 class="text-white fw-bold mb-0">{{ $totalAll }}</h2>
+                                                <small class="text-white-50">Semua Berita Acara</small>
+                                            </div>
+                                            <i class="bi bi-folder" style="font-size: 3rem; opacity: 0.5;"></i>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+
+                            {{-- MINI STATS ROW-2 --}}
+                            <div class="row g-3 mb-4">
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                                        <div class="card-body text-white d-flex align-items-center justify-content-between p-4">
+                                            <div>
+                                                <h6 class="text-white-50 mb-1">Wajib Pajak</h6>
+                                                <h2 class="text-white fw-bold mb-0">{{ $totalWp }}</h2>
+                                                <small class="text-white-50">Terdaftar</small>
+                                            </div>
+                                            <i class="bi bi-people" style="font-size: 3rem; opacity: 0.5;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">
+                                        <div class="card-body text-white d-flex align-items-center justify-content-between p-4">
+                                            <div>
+                                                <h6 class="text-white-50 mb-1">Petugas</h6>
+                                                <h2 class="text-white fw-bold mb-0">{{ $totalPegawai }}</h2>
+                                                <small class="text-white-50">Total</small>
+                                            </div>
+                                            <i class="bi bi-person-badge" style="font-size: 3rem; opacity: 0.5;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                                        <div class="card-body d-flex align-items-center justify-content-between p-4">
+                                            <div>
+                                                <h6 class="text-muted mb-1">PBB</h6>
+                                                <h2 class="fw-bold mb-0">{{ $pbbCount ?? 0 }}</h2>
+                                                <small class="text-muted">Tahun {{ date('Y') }}</small>
+                                            </div>
+                                            <i class="bi bi-house-door" style="font-size: 3rem; opacity: 0.4;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);">
+                                        <div class="card-body d-flex align-items-center justify-content-between p-4">
+                                            <div>
+                                                <h6 class="text-muted mb-1">PBJT</h6>
+                                                <h2 class="fw-bold mb-0">{{ $pbjtCount ?? 0 }}</h2>
+                                                <small class="text-muted">Tahun {{ date('Y') }}</small>
+                                            </div>
+                                            <i class="bi bi-shop" style="font-size: 3rem; opacity: 0.4;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- CHARTS ROW --}}
+                            <div class="row g-4 mb-4">
+                                <div class="col-lg-8">
+                                    <div class="card border-0 shadow-sm rounded-4">
+                                        <div class="card-header bg-white border-0 rounded-top-4 pt-4 pb-0">
+                                            <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Perbandingan PBB & PBJT per Bulan</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="beritaChart" height="280"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                                        <div class="card-header bg-white border-0 rounded-top-4 pt-4 pb-0">
+                                            <h5 class="fw-bold mb-0"><i class="bi bi-pie-chart-fill me-2 text-info"></i>Distribusi</h5>
+                                        </div>
+                                        <div class="card-body d-flex align-items-center justify-content-center">
+                                            <canvas id="pieChart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- TOP PETUGAS CHART --}}
+                            <div class="row g-4 mb-4">
+                                <div class="col-lg-6">
+                                    <div class="card border-0 shadow-sm rounded-4">
+                                        <div class="card-header bg-white border-0 rounded-top-4 pt-4 pb-0">
+                                            <h5 class="fw-bold mb-0"><i class="bi bi-trophy-fill me-2 text-warning"></i>Top 5 Petugas Teraktif</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="petugasChart" height="220"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card border-0 shadow-sm rounded-4">
+                                        <div class="card-header bg-white border-0 rounded-top-4 pt-4 pb-0">
+                                            <h5 class="fw-bold mb-0"><i class="bi bi-table me-2 text-secondary"></i>Ringkasan</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table table-borderless mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><i class="bi bi-calendar-check text-primary me-2"></i>Hari Ini</td>
+                                                        <td class="text-end fw-bold">{{ $todayCount }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><i class="bi bi-calendar-week text-danger me-2"></i>Minggu Ini</td>
+                                                        <td class="text-end fw-bold">{{ $thisWeekCount }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><i class="bi bi-calendar-month text-success me-2"></i>Bulan Ini</td>
+                                                        <td class="text-end fw-bold">{{ $thisMonthCount }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><i class="bi bi-folder text-info me-2"></i>Total</td>
+                                                        <td class="text-end fw-bold">{{ $totalAll }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><i class="bi bi-house-door text-warning me-2"></i>PBB</td>
+                                                        <td class="text-end fw-bold">{{ $pbbCount ?? 0 }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><i class="bi bi-shop text-secondary me-2"></i>PBJT</td>
+                                                        <td class="text-end fw-bold">{{ $pbjtCount ?? 0 }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @endif
                     @yield('content')
                 </div>
@@ -717,58 +866,119 @@
     @if (isset($months) && isset($counts))
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            const ctx = document.getElementById('beritaChart').getContext('2d');
+            // ===== DATA =====
+            const months     = @json($months);
+            const pbbMonthly = @json($pbbMonthly ?? []);
+            const pbjtMonthly = @json($pbjtMonthly ?? []);
+            const pbbCount   = {{ $pbbCount ?? 0 }};
+            const pbjtCount  = {{ $pbjtCount ?? 0 }};
+            const topPetugas = @json($topPetugas ?? []);
 
-            const months = @json($months);
-            const counts = @json($counts);
-
-            // Only bright pink and blue with transparency
-            const colors = [
-                'rgba(255, 99, 132, 0.6)', // bright pink
-                'rgba(54, 162, 235, 0.6)' // bright blue
-            ];
-
-            const borderColors = [
-                'rgba(255, 99, 132, 1)', // bright pink full opacity
-                'rgba(54, 162, 235, 1)' // bright blue full opacity
-            ];
-
-            // Assign colors alternating
-            const backgroundColors = months.map((_, index) => colors[index % 2]);
-            const borderColorsMapped = months.map((_, index) => borderColors[index % 2]);
-
-            const beritaChart = new Chart(ctx, {
+            // ===== 1. GROUPED BAR CHART =====
+            const ctx1 = document.getElementById('beritaChart').getContext('2d');
+            new Chart(ctx1, {
                 type: 'bar',
                 data: {
                     labels: months,
+                    datasets: [
+                        {
+                            label: 'PBB',
+                            data: pbbMonthly,
+                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                        },
+                        {
+                            label: 'PBJT',
+                            data: pbjtMonthly,
+                            backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                    },
+                    scales: {
+                        y: { beginAtZero: true, stepSize: 1, grid: { drawBorder: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // ===== 2. DOUGHNUT CHART =====
+            const ctx2 = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['PBB', 'PBJT'],
                     datasets: [{
-                        label: 'Berita Acara per Bulan',
-                        data: counts,
-                        backgroundColor: backgroundColors,
-                        borderColor: borderColorsMapped,
-                        borderWidth: 1
+                        data: [pbbCount, pbjtCount],
+                        backgroundColor: ['rgba(54, 162, 235, 0.8)', 'rgba(255, 159, 64, 0.8)'],
+                        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 159, 64, 1)'],
+                        borderWidth: 2,
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Jumlah Berita Acara per Bulan'
-                        }
+                        legend: { position: 'bottom' },
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            stepSize: 1
-                        }
-                    }
+                    cutout: '65%',
                 }
             });
+
+            // ===== 3. TOP PETUGAS BAR CHART =====
+            const ctx3 = document.getElementById('petugasChart').getContext('2d');
+            if (topPetugas.length) {
+                const labels = topPetugas.map(p => p.nama_pegawai.length > 15 ? p.nama_pegawai.substring(0, 15) + '...' : p.nama_pegawai);
+                const data   = topPetugas.map(p => p.jumlah);
+                new Chart(ctx3, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Jumlah BA',
+                            data: data,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)',
+                                'rgba(153, 102, 255, 0.7)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                        },
+                        scales: {
+                            x: { beginAtZero: true, stepSize: 1, grid: { drawBorder: false } },
+                            y: { grid: { display: false } }
+                        }
+                    }
+                });
+            } else {
+                document.getElementById('petugasChart').parentElement.innerHTML =
+                    '<div class="text-center text-muted py-5"><i class="bi bi-inbox" style="font-size: 2rem;"></i><p class="mt-2">Belum ada data tahun ini</p></div>';
+            }
         </script>
     @endif
     <!--   Core JS Files   -->

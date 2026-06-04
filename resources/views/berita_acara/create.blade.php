@@ -216,7 +216,7 @@
                         <select name="pegawai2" class="form-select">
 
                             <option value="" disabled>Pilih Petugas 2</option>
-                            <option value="0">Tidak ada</option>
+                            <option value="">Tidak ada</option>
 
                             @foreach ($pegawai as $item)
                                 <option value="{{ $item->id }}"
