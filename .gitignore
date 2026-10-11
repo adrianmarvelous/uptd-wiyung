@@ -14,6 +14,7 @@ env
 /.zed
 /auth.json
 /node_modules
+/docs/tmp
 /public/hot
 /public/storage
 /storage/*.key
