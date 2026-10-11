@@ -37,7 +37,7 @@
                     </div>
                 </div>
 
-                <p>{!! $narasi !!}</p>
+                <p>{!! nl2br(e($narasi)) !!}</p>
 
                 <div class="row mt-3">
                     <div class="col-lg-2"><strong>Petugas 1</strong></div>

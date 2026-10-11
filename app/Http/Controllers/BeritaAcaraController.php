@@ -16,8 +16,24 @@ use Carbon\Carbon;
 
 class BeritaAcaraController extends Controller
 {
-    public function index($jenis)
+    public function index(Request $request, $jenis)
     {
+        $q = trim((string) $request->query('q', ''));
+
+        // Single "bulan" input in YYYY-MM format (defaults to the current month).
+        // Empty value => no month/year filter (show all).
+        $bulanFilter = trim((string) $request->query('bulan', Carbon::now()->format('Y-m')));
+        if ($bulanFilter === 'all') {
+            $bulanFilter = ''; // "Semua Bulan" (no month/year filter)
+        }
+
+        $tahunFilter = null;
+        $monthFilter = null;
+        if (preg_match('/^(\d{4})-(\d{1,2})$/', $bulanFilter, $m)) {
+            $tahunFilter = (int) $m[1];
+            $monthFilter = (int) $m[2];
+        }
+
         $data = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])
             ->whereHas('wajibPajak', function ($query) use ($jenis) {
                 if ($jenis === 'pbb') {
@@ -26,10 +42,33 @@ class BeritaAcaraController extends Controller
                     $query->where('jenis', '!=', 'pbb');
                 }
             })
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('narasi', 'like', "%{$q}%")
+                        ->orWhere('telp', 'like', "%{$q}%")
+                        ->orWhereHas('wajibPajak', function ($wp) use ($q) {
+                            $wp->where('nop', 'like', "%{$q}%")
+                                ->orWhere('nama', 'like', "%{$q}%")
+                                ->orWhere('alamat', 'like', "%{$q}%");
+                        });
+                });
+            })
+            ->when($tahunFilter, fn ($query) => $query->whereYear('created_at', $tahunFilter))
+            ->when($monthFilter, fn ($query) => $query->whereMonth('created_at', $monthFilter))
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(25)
+            ->withQueryString();
 
-        return view('berita_acara.index', compact('data', 'jenis'));
+        return view('berita_acara.index', compact('data', 'jenis', 'q', 'bulanFilter'));
+    }
+
+    /**
+     * Show the CSV upload page.
+     * Extracted from a route closure so `php artisan route:cache` works.
+     */
+    public function uploadCsv()
+    {
+        return view('berita_acara.upload_csv');
     }
 
 
@@ -139,9 +178,9 @@ class BeritaAcaraController extends Controller
 
         $pegawai = Pegawai::orderBy('nama_pegawai', 'asc')->get();
 
-        $nop = $berita->wajibPajak->nop;
-        $nama = $berita->wajibPajak->nama;
-        $alamat = $berita->wajibPajak->alamat;
+        $nop = $berita->wajibPajak?->nop ?? '';
+        $nama = $berita->wajibPajak?->nama ?? '';
+        $alamat = $berita->wajibPajak?->alamat ?? '';
 
         return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai', 'berita'));
     }
@@ -482,6 +521,8 @@ class BeritaAcaraController extends Controller
                 $query->where('pegawai1', $id)
                     ->orWhere('pegawai2', $id);
             })
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
             ->orderBy('created_at', 'desc')
             ->get();
         //    dd($data); 
@@ -516,7 +557,7 @@ class BeritaAcaraController extends Controller
     }
     public function detail_pw($id,$bulan,$tahun)
     {
-        $wp = WajibPajak::find($id);
+        $wp = WajibPajak::findOrFail($id);
         $data = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])
                                     ->where('id_wajib_pajak',$id)
                                     ->whereMonth('created_at',$bulan)
@@ -527,10 +568,14 @@ class BeritaAcaraController extends Controller
     }
     public function change_char()
     {
-        DB::table('wajib_pajak')
-        ->update([
-            'nop' => DB::raw("REPLACE(nop, '-', '.')")
-        ]);
+        $affected = DB::table('wajib_pajak')
+            ->update([
+                'nop' => DB::raw("REPLACE(nop, '-', '.')")
+            ]);
+
+        return redirect()
+            ->route('dashboard')
+            ->with('success', "Format NOP berhasil diperbarui untuk {$affected} data.");
     }
     // public function readCsv(Request $request)
     // {

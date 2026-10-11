@@ -89,7 +89,7 @@
         <p style="text-indent: 30px">Pada hari ini {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('l') }}
             tanggal {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('j F Y') }} telah diadakan pemeriksaan ditempat,
             dengan hasil sebagai berikut</p>
-        <p style="text-indent: 30px">{!! $data->narasi !!}</p>
+        <p style="text-indent: 30px">{!! nl2br(e($data->narasi)) !!}</p>
     </div>
     <table width="100%">
         <tr>
@@ -116,7 +116,10 @@
                             <span>1. {{ optional($data->pegawaiSatu)->nama_pegawai ?? '-' }}</span>
                         </td>
                         <td rowspan="2" style="text-align: center;">
-                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawaiSatu->nip_nik.'.png'))) }}" width="70">
+                            @php $spesimen1 = public_path('spesimen/'.$data->pegawaiSatu->nip_nik.'.png'); @endphp
+                            @if (file_exists($spesimen1))
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents($spesimen1)) }}" width="70">
+                            @endif
                         </td>
                     </tr>
                     <tr>
@@ -130,7 +133,10 @@
                             2. {{ optional($data->pegawaiDua)->nama_pegawai ?? '-' }}
                         </td>
                         <td rowspan="2" style="text-align: center;">
-                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('spesimen/'.$data->pegawaiDua->nip_nik.'.png'))) }}" width="70">
+                            @php $spesimen2 = public_path('spesimen/'.$data->pegawaiDua->nip_nik.'.png'); @endphp
+                            @if (file_exists($spesimen2))
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents($spesimen2)) }}" width="70">
+                            @endif
                         </td>
                     </tr>
                     <tr>

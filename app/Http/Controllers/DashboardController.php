@@ -29,47 +29,52 @@ class DashboardController extends Controller
             $totalPegawai = Pegawai::count();
 
             // ================================
-            // Monthly chart data (bar)
+            // Monthly chart data (bar) — ONE query for all 12 months
             // ================================
+            $tahunIni = Carbon::now()->year;
+
+            $monthlyTotals = DB::table('berita_acara')
+                ->selectRaw('MONTH(created_at) as bulan, COUNT(*) as total')
+                ->whereYear('created_at', $tahunIni)
+                ->groupBy('bulan')
+                ->pluck('total', 'bulan'); // [1 => n, 2 => n, ...]
+
             $months = [];
             $counts = [];
             for ($i = 1; $i <= 12; $i++) {
-                $ms = Carbon::create(null, $i, 1)->startOfMonth();
-                $me = Carbon::create(null, $i, 1)->endOfMonth();
-                $months[] = $ms->isoFormat('MMM');
-                $counts[] = BeritaAcara::whereBetween('created_at', [$ms, $me])->count();
+                $months[] = Carbon::create($tahunIni, $i, 1)->isoFormat('MMM');
+                $counts[] = (int) ($monthlyTotals[$i] ?? 0);
             }
 
             // ================================
-            // PBB vs PBJT pie chart (this year)
+            // Monthly PBB vs PBJT breakdown — ONE query
             // ================================
-            $tahunIni = Carbon::now()->year;
-            $pbbCount = BeritaAcara::whereHas('wajibPajak', function ($q) {
-                    $q->where('jenis', 'pbb');
-                })
-                ->whereYear('created_at', $tahunIni)
-                ->count();
-            $pbjtCount = BeritaAcara::whereHas('wajibPajak', function ($q) {
-                    $q->where('jenis', '!=', 'pbb');
-                })
-                ->whereYear('created_at', $tahunIni)
-                ->count();
+            $monthlyJenis = DB::table('berita_acara')
+                ->join('wajib_pajak', 'wajib_pajak.id', '=', 'berita_acara.id_wajib_pajak')
+                ->selectRaw(
+                    "MONTH(berita_acara.created_at) as bulan, " .
+                    "CASE WHEN wajib_pajak.jenis = 'pbb' THEN 'pbb' ELSE 'pbjt' END as kategori, " .
+                    "COUNT(*) as total"
+                )
+                ->whereYear('berita_acara.created_at', $tahunIni)
+                ->groupBy('bulan', 'kategori')
+                ->get();
 
-            // ================================
-            // Monthly PBB vs PBJT breakdown (stacked / grouped)
-            // ================================
-            $pbbMonthly = [];
-            $pbjtMonthly = [];
-            for ($i = 1; $i <= 12; $i++) {
-                $ms = Carbon::create(null, $i, 1)->startOfMonth();
-                $me = Carbon::create(null, $i, 1)->endOfMonth();
+            $pbbMonthly  = array_fill(0, 12, 0);
+            $pbjtMonthly = array_fill(0, 12, 0);
 
-                $pbbMonthly[] = BeritaAcara::whereHas('wajibPajak', fn($q) => $q->where('jenis', 'pbb'))
-                    ->whereBetween('created_at', [$ms, $me])->count();
-
-                $pbjtMonthly[] = BeritaAcara::whereHas('wajibPajak', fn($q) => $q->where('jenis', '!=', 'pbb'))
-                    ->whereBetween('created_at', [$ms, $me])->count();
+            foreach ($monthlyJenis as $row) {
+                $idx = ((int) $row->bulan) - 1;
+                if ($row->kategori === 'pbb') {
+                    $pbbMonthly[$idx] = (int) $row->total;
+                } else {
+                    $pbjtMonthly[$idx] = (int) $row->total;
+                }
             }
+
+            // Pie chart totals (this year) — derived from the same result set
+            $pbbCount  = array_sum($pbbMonthly);
+            $pbjtCount = array_sum($pbjtMonthly);
 
             // ================================
             // Top 5 petugas by activity

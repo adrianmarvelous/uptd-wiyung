@@ -22,7 +22,7 @@
                     "Font Awesome 5 Brands",
                     "simple-line-icons",
                 ],
-                urls: ["assets/css/fonts.min.css"],
+                urls: ["{{ asset('templetes/kaiadmin-lite/assets/css/fonts.min.css') }}"],
             },
             active: function() {
                 sessionStorage.fonts = true;
@@ -78,7 +78,7 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Validasi Gagal!',
-                html: `{!! implode('<br>', $errors->all()) !!}`, // tampilkan semua error dalam 1 popup
+                html: `{!! implode('<br>', array_map(fn ($m) => e($m), $errors->all())) !!}`, // tampilkan semua error dalam 1 popup
             });
         </script>
     @endif
@@ -459,7 +459,7 @@
                           <a href="#">
                             <div class="notif-img">
                               <img
-                                src="assets/img/profile2.jpg"
+                                src="{{ asset('templetes/kaiadmin-lite/assets/img/profile2.jpg') }}"
                                 alt="Img Profile"
                               />
                             </div>

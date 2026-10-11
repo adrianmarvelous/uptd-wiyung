@@ -139,8 +139,27 @@
             </div>
         </div>
 
+        <form method="GET" action="{{ route('berita_acara', ['jenis' => $jenis]) }}" class="mb-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-5">
+                    <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control"
+                        placeholder="Cari NOP / Nama / Alamat / Narasi...">
+                </div>
+                <div class="col-md-3">
+                    <input type="month" name="bulan" value="{{ $bulanFilter ?? '' }}" class="form-control"
+                        title="Filter bulan & tahun (kosongkan untuk semua)">
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Cari</button>
+                    <a class="btn btn-outline-secondary"
+                        href="{{ route('berita_acara', ['jenis' => $jenis, 'bulan' => 'all']) }}">Semua Bulan</a>
+                    <a class="btn btn-secondary" href="{{ route('berita_acara', ['jenis' => $jenis]) }}">Reset</a>
+                </div>
+            </div>
+        </form>
+
         <div class="table-responsive">
-            <table class="table" id="basic-datatables">
+            <table class="table" id="berita-acara-table">
                 <thead class="table-primary">
                     <tr>
                         <th class="d-none d-md-table-cell">No</th>
@@ -181,13 +200,13 @@
 
                             {{-- NO (desktop only) --}}
                             <td class="d-none d-md-table-cell">
-                                {{ $loop->iteration }}
+                                {{ ($data->currentPage() - 1) * $data->perPage() + $loop->iteration }}
                             </td>
 
                             <td class="d-none d-md-table-cell">{{ $item->wajibPajak->nop }}</td>
                             <td data-label="Nama">{{ $item->wajibPajak->nama }}</td>
                             <td class="d-none d-md-table-cell">{{ $item->wajibPajak->alamat }}</td>
-                            <td class="d-none d-md-table-cell">{!! $item->narasi !!}</td>
+                            <td class="d-none d-md-table-cell">{!! nl2br(e($item->narasi)) !!}</td>
                             <td class="d-none d-md-table-cell">{{ $item->pegawaiSatu ? $item->pegawaiSatu->nama_pegawai : '-' }}
                             </td>
                             <td class="d-none d-md-table-cell">{{ $item->pegawaiDua ? $item->pegawaiDua->nama_pegawai : '-' }}
@@ -231,6 +250,8 @@
                 </tbody>
             </table>
         </div>
+
+        {{ $data->links('pagination::bootstrap-5') }}
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

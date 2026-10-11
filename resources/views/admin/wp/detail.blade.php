@@ -28,7 +28,7 @@
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $item->wajibPajak->nama }}</td>
                             <td>{{ $item->nama }}</td>
-                            <td>{!! $item->narasi !!}</td>
+                            <td>{!! nl2br(e($item->narasi)) !!}</td>
                             <td>{{ $item->telp }}</td>
                             <td>{{ $item->created_at->format('d-M-Y') }}</td>
                             <td>{{ $item->pegawaiSatu->nama_pegawai }}</td>
