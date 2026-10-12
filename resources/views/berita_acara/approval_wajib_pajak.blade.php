@@ -6,6 +6,13 @@
     <div class="card">
         <div class="card-body">
 
+            @if ($wajibPajakBaru ?? false)
+                <div class="alert alert-info py-2">
+                    Wajib pajak baru: <strong>{{ $nama }}</strong> akan didaftarkan otomatis saat berita acara
+                    disimpan.
+                </div>
+            @endif
+
             <form action="{{ route('berita_acara.store') }}" method="POST">
                 @csrf
 
@@ -110,6 +117,7 @@
                     <input type="hidden" name="narasi" value="{{ $narasi }}">
                     <input type="hidden" name="pegawai1" value="{{ $pegawai1->id }}">
                     <input type="hidden" name="pegawai2" value="{{ $pegawai2->id ?? null }}">
+                    <input type="hidden" name="jenis" value="{{ $jenis ?? '' }}">
 
                     <button type="submit" class="btn btn-primary">Simpan</button>
 

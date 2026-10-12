@@ -47,7 +47,23 @@ npm ci && npm run build
 Folder `build/` lalu juga perlu ada di web root (`public_html/build`) — di server ini
 isinya identik dan bisa disalin.
 
-## 4. Setelah setiap deploy / pull
+## 4. Berkas `.env` di server
+`.env` **tidak ikut repo** (terdaftar di `.gitignore`) dan harus dibuat sendiri di server.
+Variabel penting:
+
+| Variabel | Keterangan |
+|---|---|
+| `APP_ENV` / `APP_DEBUG` | `production` / `false` |
+| `APP_KEY` | hasil `php artisan key:generate` |
+| `DB_*` | kredensial database server |
+| `RECAPTCHA_SITE_KEY`, `RECAPTCHA_SECRET_KEY` | kunci reCAPTCHA v2 (kotak centang) dari https://www.google.com/recaptcha/admin |
+
+> ⚠️ **reCAPTCHA otomatis nonaktif bila kedua kunci kosong/dikomentari** (lihat
+> `app/Rules/ReCaptcha.php` dan `resources/views/auth/login.blade.php`). Kunci di `.env` lokal
+> biasanya dikomentari selama testing; pastikan di server keduanya **terisi**, kalau tidak halaman
+> login tidak lagi menampilkan kotak "Saya bukan robot".
+
+## 5. Setelah setiap deploy / pull
 ```bash
 cd laravel_app
 php artisan optimize:clear
@@ -56,7 +72,7 @@ php artisan route:cache
 php artisan view:cache
 ```
 
-## 5. Berkas aplikasi web (.htaccess)
+## 6. Berkas aplikasi web (.htaccess)
 Isi `public_html/.htaccess`:
 
 ```apache
@@ -68,7 +84,7 @@ Isi `public_html/.htaccess`:
 </IfModule>
 ```
 
-## 6. Dokumentasi
+## 7. Dokumentasi
 - Panduan pengguna (PDF): `docs/Panduan-Pengguna-Berita-Acara-UPTB-Wiyung.pdf`
 - Buat ulang PDF: `C:\xampp\php\php.exe laravel_app\docs\build-guide.php`
 - Ambil ulang screenshot mobile (butuh Chrome jalan dengan `--remote-debugging-port=9333`):

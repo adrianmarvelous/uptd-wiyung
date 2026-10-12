@@ -6,6 +6,13 @@
     <div class="card">
         <div class="card-body">
 
+            @if ($wajibPajakBaru ?? false)
+                <div class="alert alert-info py-2">
+                    Wajib pajak <strong>{{ $nop }}</strong> belum terdaftar. Nama &amp; alamat yang diisi akan
+                    disimpan sebagai wajib pajak baru saat berita acara disimpan.
+                </div>
+            @endif
+
             <div class="d-flex justify-content-end">
 
                 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -27,9 +34,14 @@
                                     <input type="hidden" name="id" value="{{ $berita->id }}">
                                 @endisset
 
-                                {{-- Hidden NOP --}}
+                                {{-- Hidden data wajib pajak --}}
                                 <input type="hidden" id="hidden_nop" name="nop"
                                     value="{{ old('nop', $berita->wajibPajak->nop ?? $nop) }}">
+                                <input type="hidden" name="nama"
+                                    value="{{ old('nama', $berita->wajibPajak->nama ?? $nama) }}">
+                                <input type="hidden" name="alamat"
+                                    value="{{ old('alamat', $berita->wajibPajak->alamat ?? $alamat) }}">
+                                <input type="hidden" name="jenis" value="{{ $jenis ?? '' }}">
 
                                 <div class="modal-body">
                                     {{-- File Upload --}}
@@ -149,9 +161,12 @@
 
 
                 {{-- Hidden values used for submit --}}
-                <input type="hidden" id="hidden_nop" name="nop" value="{{ $berita->nop ?? $nop }}">
-                <input type="hidden" id="hidden_nama" name="nama" value="{{ $berita->nama ?? $nama }}">
-                <input type="hidden" id="hidden_alamat" name="alamat" value="{{ $berita->alamat ?? $alamat }}">
+                <input type="hidden" id="hidden_nop" name="nop" value="{{ $berita->wajibPajak->nop ?? $nop }}">
+                <input type="hidden" id="hidden_nama" name="nama"
+                    value="{{ $berita->wajibPajak->nama ?? $nama }}">
+                <input type="hidden" id="hidden_alamat" name="alamat"
+                    value="{{ $berita->wajibPajak->alamat ?? $alamat }}">
+                <input type="hidden" name="jenis" value="{{ $jenis ?? '' }}">
 
 
 
@@ -250,7 +265,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            const jenis = "{{ $berita->wajibPajak->jenis ?? request()->route('jenis') }}";
+            const jenis = "{{ $jenis ?? request()->route('jenis') }}";
 
             async function searchWP(keyword) {
 
@@ -317,17 +332,19 @@
 
                 document.getElementById('alamat').value = item.alamat;
 
-
-
-                document.getElementById('hidden_nop').value = item.nop;
-                document.getElementById('hidden_nama').value = item.nama;
-                document.getElementById('hidden_alamat').value = item.alamat;
-
-
+                setFieldValue('nop', item.nop);
+                setFieldValue('nama', item.nama);
+                setFieldValue('alamat', item.alamat);
 
                 document.querySelectorAll('.dropdown-list')
                     .forEach(d => d.classList.add('d-none'));
 
+            }
+
+            // Isi semua field ber-name sama (form utama & modal upload berita acara).
+            function setFieldValue(name, value) {
+                document.querySelectorAll(`form input[name="${name}"]`)
+                    .forEach(el => el.value = value);
             }
 
 
@@ -385,15 +402,15 @@
 
 
             document.getElementById('nop').addEventListener('input', function() {
-                document.getElementById('hidden_nop').value = this.value;
+                setFieldValue('nop', this.value);
             });
 
             document.getElementById('nama').addEventListener('input', function() {
-                document.getElementById('hidden_nama').value = this.value;
+                setFieldValue('nama', this.value);
             });
 
             document.getElementById('alamat').addEventListener('input', function() {
-                document.getElementById('hidden_alamat').value = this.value;
+                setFieldValue('alamat', this.value);
             });
 
 

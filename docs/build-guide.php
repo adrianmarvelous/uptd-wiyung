@@ -311,16 +311,30 @@ lalu menandatangani dan menyimpan.</p>
 <p>Pada halaman daftar (PBJT atau PBB), klik tombol <b>Buat Berita Acara PBJT</b>
 (atau <b>Buat Berita Acara PBB</b>) di atas tabel.</p>
 {$shot04}
+<p>Jendela <b>Berita Acara Baru</b> mendukung dua cara pengisian:</p>
+<h3>A. Wajib Pajak sudah terdaftar</h3>
 <ol>
-    <li>Jendela <b>Berita Acara Baru</b> akan terbuka.</li>
     <li>Ketik minimal <b>2 karakter</b> pada kolom <b>NOP</b>. Daftar Wajib Pajak akan muncul otomatis.</li>
     <li>Klik salah satu hasil pencarian. Kolom <b>Nama</b> dan <b>Alamat</b> akan terisi otomatis.</li>
+    <li>Perhatikan keterangan berwarna hijau <i>&ldquo;Wajib pajak terdaftar&rdquo;</i>, lalu klik tombol
+        <b>Selanjutnya</b>.</li>
+</ol>
+<h3>B. Wajib Pajak baru (belum terdaftar)</h3>
+<ol>
+    <li>Isi kolom <b>NOP</b>, <b>Nama</b>, dan <b>Alamat</b> secara manual.</li>
+    <li>Sistem akan menampilkan keterangan berwarna biru
+        <i>&ldquo;Wajib pajak baru &mdash; akan didaftarkan otomatis&rdquo;</i>.</li>
     <li>Klik tombol <b>Selanjutnya</b> untuk membuka formulir Berita Acara.</li>
 </ol>
+<div class="tip">
+    Wajib Pajak baru <b>tidak perlu didaftarkan lebih dulu</b>. Data Nama dan Alamat yang Anda isi
+    akan disimpan otomatis sebagai data Wajib Pajak pada saat Berita Acara disimpan
+    (halaman PBJT tersimpan dengan jenis <i>OP</i>, halaman PBB dengan jenis <i>pbb</i>).
+</div>
 <div class="warn">
-    Data Wajib Pajak harus sudah terdaftar di sistem. Apabila NOP tidak ditemukan, sistem akan
-    menampilkan pesan <i>&ldquo;Wajib Pajak tidak ditemukan&rdquo;</i>. Hubungi Administrator untuk
-    menambahkan data Wajib Pajak terlebih dahulu.
+    Pastikan penulisan <b>NOP</b>, <b>Nama</b>, dan <b>Alamat</b> benar sebelum melanjutkan. NOP yang
+    sudah terdaftar akan langsung memakai data Wajib Pajak yang tersimpan di sistem, sedangkan NOP
+    yang belum terdaftar akan dibuat sebagai data Wajib Pajak baru.
 </div>
 
 <h2>7.2 Langkah 2 &mdash; Isi Formulir Berita Acara</h2>
@@ -468,8 +482,11 @@ menjadi titik (<code>.</code>).</p>
 <p>Periksa <b>filter bulan</b> terlebih dahulu. Secara default daftar hanya menampilkan bulan
 berjalan. Klik <b>Semua Bulan</b> untuk menampilkan seluruh data.</p>
 
-<h3>NOP tidak ditemukan saat membuat Berita Acara</h3>
-<p>Pastikan NOP sudah terdaftar. Hubungi Administrator untuk menambahkan data Wajib Pajak.</p>
+<h3>NOP belum terdaftar saat membuat Berita Acara</h3>
+<p>NOP yang belum terdaftar dapat langsung dipakai: isi kolom <b>NOP</b>, <b>Nama</b>, dan
+<b>Alamat</b> pada jendela <b>Berita Acara Baru</b>. Sistem akan mendaftarkan Wajib Pajak baru
+tersebut secara otomatis ketika Berita Acara disimpan. Pastikan Nama dan Alamat sudah benar, karena
+data inilah yang tersimpan. Hubungi Administrator apabila data perlu diperbaiki setelah tersimpan.</p>
 
 <h3>Tidak bisa login</h3>
 <ul>

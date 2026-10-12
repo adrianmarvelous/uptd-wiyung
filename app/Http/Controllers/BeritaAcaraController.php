@@ -9,6 +9,7 @@ use App\Models\Pegawai;
 use App\Models\BeritaAcara;
 use App\Support\UrlId;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Mpdf\Mpdf;
@@ -109,9 +110,10 @@ class BeritaAcaraController extends Controller
     public function create(Request $request)
     {
         $validated = $request->validate([
-            'nop' => ['required', 'string', 'max:255', new SafeInput],
-            'nama' => ['required', 'string', 'max:255', new SafeInput],
+            'nop' => ['required', 'string', 'max:30', new SafeInput],
+            'nama' => ['required', 'string', 'max:150', new SafeInput],
             'alamat' => ['required', 'string', 'max:255', new SafeInput],
+            'jenis' => ['nullable', 'string', 'max:20', new SafeInput],
         ]);
 
 
@@ -119,18 +121,17 @@ class BeritaAcaraController extends Controller
         $nama = $validated['nama'];
         $alamat = $validated['alamat'];
 
+        // NOP yang sudah terdaftar dipakai apa adanya; NOP yang belum ada
+        // diperlakukan sebagai wajib pajak baru (didaftarkan saat simpan).
         $wajibPajak = WajibPajak::where('nop', $nop)->first();
-        if (!$wajibPajak) {
-            return back()->withErrors([
-                'nop' => 'Wajib Pajak tidak ditemukan'
-            ])->withInput();
-        }
+        $wajibPajakBaru = $wajibPajak === null;
+        $jenis = $wajibPajak?->jenis ?? $this->jenisWajibPajak($validated['jenis'] ?? null);
 
         $pegawai = Pegawai::orderBy('nama_pegawai', 'asc')->get();
 
 
         $berita = null;
-        return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai', 'berita'));
+        return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai', 'berita', 'jenis', 'wajibPajakBaru'));
     }
 
     public function approval_wajib_pajak(Request $request)
@@ -145,6 +146,7 @@ class BeritaAcaraController extends Controller
             'narasi' => ['required', 'string', new SafeInput],
             'pegawai1' => ['required', 'integer', new SafeInput],
             'pegawai2' => ['nullable', 'integer', new SafeInput],
+            'jenis' => ['nullable', 'string', 'max:20', new SafeInput],
         ]);
         $berita = null;
 
@@ -165,12 +167,14 @@ class BeritaAcaraController extends Controller
             }
         }
         $narasi = $validated['narasi'];
+        $jenis = $validated['jenis'] ?? null;
+        $wajibPajakBaru = !WajibPajak::where('nop', $nop)->exists();
         $pegawai1_id = $validated['pegawai1'];
         $pegawai2_id = !empty($validated['pegawai2']) ? $validated['pegawai2'] : null;
         $pegawai1 = Pegawai::find($pegawai1_id);
         $pegawai2 = $pegawai2_id ? Pegawai::find($pegawai2_id) : null;
 
-        return view('berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2', 'berita'));
+        return view('berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2', 'berita', 'jenis', 'wajibPajakBaru'));
     }
 
     public function edit($kode)
@@ -181,11 +185,14 @@ class BeritaAcaraController extends Controller
 
         $pegawai = Pegawai::orderBy('nama_pegawai', 'asc')->get();
 
-        $nop = $berita->wajibPajak?->nop ?? '';
-        $nama = $berita->wajibPajak?->nama ?? '';
-        $alamat = $berita->wajibPajak?->alamat ?? '';
+        $wajibPajak = $berita->wajibPajak;
+        $nop = $wajibPajak?->nop ?? '';
+        $nama = $wajibPajak?->nama ?? '';
+        $alamat = $wajibPajak?->alamat ?? '';
+        $jenis = $wajibPajak?->jenis ?? request()->route('jenis');
+        $wajibPajakBaru = false;
 
-        return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai', 'berita'));
+        return view('berita_acara.create', compact('nop', 'nama', 'alamat', 'pegawai', 'berita', 'jenis', 'wajibPajakBaru'));
     }
     public function update(Request $request)
     {
@@ -202,12 +209,13 @@ class BeritaAcaraController extends Controller
         // ===============================
         $validated = $request->validate([
             'id'             => ['nullable', 'integer'],
-            'nop'            => ['required', 'string', 'max:255', new SafeInput],
+            'nop'            => ['required', 'string', 'max:30', new SafeInput],
             'nama'           => ['required', 'string', 'max:255', new SafeInput],
             'alamat'         => ['required', 'string', 'max:255', new SafeInput],
             'nama_responden' => ['required', 'string', 'max:255', new SafeInput],
             'telp'           => ['required', 'string', 'max:255', new SafeInput],
             'narasi'         => ['required', 'string', new SafeInput],
+            'jenis'          => ['nullable', 'string', 'max:20', new SafeInput],
             'ttd_wajib_pajak' => ['nullable', 'string'],
             'pegawai1'       => ['required', 'integer'],
             'pegawai2'       => ['nullable', 'integer'],
@@ -215,14 +223,19 @@ class BeritaAcaraController extends Controller
 
         // ===============================
         // AMBIL WAJIB PAJAK
+        // Wajib pajak terdaftar dipakai apa adanya, NOP baru didaftarkan
+        // otomatis memakai nama & alamat yang diinput.
         // ===============================
         $wajibPajak = WajibPajak::where('nop', $validated['nop'])->first();
 
-        if (!$wajibPajak) {
-            return back()->withErrors([
-                'nop' => 'Wajib Pajak tidak ditemukan'
-            ])->withInput();
-        }
+        $dataWajibPajakBaru = $wajibPajak
+            ? null
+            : $this->dataWajibPajakBaru(
+                $validated['nop'],
+                $validated['nama'],
+                $validated['alamat'],
+                $validated['jenis'] ?? null
+            );
 
         // ===============================
         // PROCESS SIGNATURE (OPTIONAL)
@@ -251,7 +264,6 @@ class BeritaAcaraController extends Controller
         // PREPARE DATA
         // ===============================
         $data = [
-            'id_wajib_pajak' => $wajibPajak->id,
             'telp'           => $validated['telp'],
             'nama'           => $validated['nama_responden'],
             'narasi'         => $validated['narasi'],
@@ -271,6 +283,15 @@ class BeritaAcaraController extends Controller
 
         try {
 
+            if (!$wajibPajak) {
+                $wajibPajak = WajibPajak::firstOrCreate(
+                    ['nop' => $validated['nop']],
+                    $dataWajibPajakBaru
+                );
+            }
+
+            $data['id_wajib_pajak'] = $wajibPajak->id;
+
             BeritaAcara::updateOrCreate(
                 ['id' => $validated['id'] ?? null], // search condition
                 $data                            // update/create data
@@ -289,6 +310,38 @@ class BeritaAcaraController extends Controller
                 'error' => 'Gagal menyimpan Berita Acara: ' . $e->getMessage()
             ])->withInput();
         }
+    }
+
+    /**
+     * Normalisasi jenis wajib pajak dari halaman berita acara:
+     * halaman PBB memakai 'pbb', halaman PBJT memakai 'OP'.
+     */
+    private function jenisWajibPajak(?string $jenis): string
+    {
+        return $jenis === 'pbb' ? 'pbb' : 'OP';
+    }
+
+    /**
+     * Susun data wajib pajak baru dari input user.
+     * Kolom tabel wajib_pajak: nop varchar(30), nama varchar(150), alamat text.
+     */
+    private function dataWajibPajakBaru(string $nop, string $nama, string $alamat, ?string $jenis): array
+    {
+        Validator::make(
+            ['nop' => $nop, 'nama' => $nama],
+            ['nop' => ['max:30'], 'nama' => ['max:150']],
+            [
+                'nop.max' => 'NOP maksimal 30 karakter.',
+                'nama.max' => 'Nama maksimal 150 karakter.',
+            ]
+        )->validate();
+
+        return [
+            'nop' => $nop,
+            'nama' => $nama,
+            'alamat' => $alamat,
+            'jenis' => $this->jenisWajibPajak($jenis),
+        ];
     }
 
     /**
@@ -403,23 +456,46 @@ class BeritaAcaraController extends Controller
     public function upload(Request $request)
     {
         $validated = $request->validate([
-            'nop' => ['required', 'string', 'max:255', new SafeInput],
+            'nop' => ['required', 'string', 'max:30', new SafeInput],
+            'nama' => ['nullable', 'string', 'max:255', new SafeInput],
+            'alamat' => ['nullable', 'string', 'max:255', new SafeInput],
+            'jenis' => ['nullable', 'string', 'max:20', new SafeInput],
             'pegawai1' => ['required', 'integer'],
             'pegawai2' => ['nullable', 'integer'],
             'id' => ['nullable', 'integer', 'exists:berita_acara,id'], // optional for update
         ]);
 
-        // Get Wajib Pajak
+        // Get Wajib Pajak — NOP baru (belum terdaftar) didaftarkan otomatis,
+        // asalkan nama & alamat wajib pajak ikut dikirim.
         $wajibPajak = WajibPajak::where('nop', $validated['nop'])->first();
+
+        $dataWajibPajakBaru = null;
+
         if (!$wajibPajak) {
-            return back()->withErrors([
-                'nop' => 'Wajib Pajak tidak ditemukan'
-            ])->withInput();
+            if (blank($validated['nama'] ?? null) || blank($validated['alamat'] ?? null)) {
+                return back()->withErrors([
+                    'nop' => 'Wajib Pajak tidak ditemukan'
+                ])->withInput();
+            }
+
+            $dataWajibPajakBaru = $this->dataWajibPajakBaru(
+                $validated['nop'],
+                $validated['nama'],
+                $validated['alamat'],
+                $validated['jenis'] ?? null
+            );
         }
 
         DB::beginTransaction();
 
         try {
+            if (!$wajibPajak) {
+                $wajibPajak = WajibPajak::firstOrCreate(
+                    ['nop' => $validated['nop']],
+                    $dataWajibPajakBaru
+                );
+            }
+
             // Validate file only if uploaded
             if ($request->hasFile('file')) {
                 $request->validate([

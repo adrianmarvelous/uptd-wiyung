@@ -101,20 +101,27 @@
 
                     <form action="{{ route('berita_acara.create') }}" method="POST">
                         @csrf
+                        <input type="hidden" name="jenis" value="{{ request()->route('jenis') }}">
                         <div class="modal-body">
+
+                            <p class="text-muted small mb-2">
+                                Pilih wajib pajak yang sudah terdaftar dari daftar pencarian, atau isi NOP
+                                baru beserta nama &amp; alamat untuk mendaftarkan wajib pajak baru.
+                            </p>
 
                             {{-- NOP --}}
                             <label>NOP</label>
                             <div class="position-relative mb-3">
                                 <input type="text" class="form-control search-input" id="nop" name="nop"
-                                    placeholder="Cari NOP" autocomplete="off">
+                                    placeholder="Cari NOP" autocomplete="off" required>
                                 <div class="dropdown-list list-group d-none"></div>
                             </div>
 
                             {{-- Nama --}}
                             <label>Nama</label>
                             <div class="position-relative mb-3">
-                                <input type="text" id="nama" class="form-control search-input" autocomplete="off">
+                                <input type="text" id="nama" class="form-control search-input" autocomplete="off"
+                                    required>
                                 <input type="hidden" id="nama_real" name="nama">
                                 <div class="dropdown-list list-group d-none"></div>
                             </div>
@@ -123,9 +130,12 @@
                             <label>Alamat</label>
                             <div class="position-relative">
                                 <input type="text" class="form-control search-input" id="alamat" name="alamat"
-                                    placeholder="Cari Alamat" autocomplete="off">
+                                    placeholder="Cari Alamat" autocomplete="off" required>
                                 <div class="dropdown-list list-group d-none"></div>
                             </div>
+
+                            {{-- Status wajib pajak: terdaftar / baru --}}
+                            <div id="wp-status" class="small fw-semibold mt-3"></div>
 
                         </div>
 
@@ -305,7 +315,28 @@
                 document.getElementById('nama_real').value = item.nama; 
                 document.getElementById('alamat').value = item.alamat;
 
+                setStatus(true);
+
                 document.querySelectorAll('.dropdown-list').forEach(d => d.classList.add('d-none'));
+            }
+
+            // Tandai apakah user memilih wajib pajak terdaftar atau menginput baru.
+            function setStatus(terdaftar) {
+                const status = document.getElementById('wp-status');
+                if (!status) return;
+
+                status.className = 'small fw-semibold mt-3 ' + (terdaftar ? 'text-success' : 'text-primary');
+                status.textContent = terdaftar
+                    ? 'Wajib pajak terdaftar — data akan memakai data yang tersimpan.'
+                    : 'Wajib pajak baru — akan didaftarkan otomatis saat berita acara disimpan.';
+            }
+
+            function clearStatus() {
+                const status = document.getElementById('wp-status');
+                if (!status) return;
+
+                status.className = 'small fw-semibold mt-3';
+                status.textContent = '';
             }
 
             function debounce(fn, delay = 400) {
@@ -324,6 +355,17 @@
                     const data = await searchWP(input.value);
                     cache = data;
                     renderDropdown(dropdown, data, field);
+
+                    // NOP yang persis sama dengan data terdaftar => pakai data lama,
+                    // selain itu akan didaftarkan sebagai wajib pajak baru.
+                    if (field === 'nop') {
+                        const nop = input.value.trim().toLowerCase();
+                        if (nop.length < 2) {
+                            clearStatus();
+                        } else {
+                            setStatus(data.some(item => item.nop.trim().toLowerCase() === nop));
+                        }
+                    }
                 });
 
                 input.addEventListener('input', debounced);
