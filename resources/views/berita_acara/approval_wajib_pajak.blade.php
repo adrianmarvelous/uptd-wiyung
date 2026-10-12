@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <p>{!! nl2br(e($narasi)) !!}</p>
+                <p>{!! \App\Support\Narasi::aman($narasi) !!}</p>
 
                 <div class="row mt-3">
                     <div class="col-lg-2"><strong>Petugas 1</strong></div>

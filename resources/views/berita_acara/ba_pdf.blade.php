@@ -89,7 +89,7 @@
         <p style="text-indent: 30px">Pada hari ini {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('l') }}
             tanggal {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('j F Y') }} telah diadakan pemeriksaan ditempat,
             dengan hasil sebagai berikut</p>
-        <p style="text-indent: 30px">{!! nl2br(e($data->narasi)) !!}</p>
+        <div style="text-indent: 30px">{!! \App\Support\Narasi::aman($data->narasi) !!}</div>
     </div>
     <table width="100%">
         <tr>

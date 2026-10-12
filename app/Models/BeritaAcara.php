@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\Narasi;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class BeritaAcara extends Model
@@ -31,5 +33,13 @@ class BeritaAcara extends Model
     public function pegawaiDua()
     {
         return $this->belongsTo(Pegawai::class, 'pegawai2');
+    }
+
+    /**
+     * Narasi versi teks biasa (tanpa tag HTML) untuk tabel daftar/detail.
+     */
+    protected function narasiTeks(): Attribute
+    {
+        return Attribute::get(fn () => Narasi::teks($this->narasi));
     }
 }

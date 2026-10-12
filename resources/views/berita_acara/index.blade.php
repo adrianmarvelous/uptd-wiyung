@@ -216,7 +216,7 @@
                             <td class="d-none d-md-table-cell">{{ $item->wajibPajak->nop }}</td>
                             <td data-label="Nama">{{ $item->wajibPajak->nama }}</td>
                             <td class="d-none d-md-table-cell">{{ $item->wajibPajak->alamat }}</td>
-                            <td class="d-none d-md-table-cell">{!! nl2br(e($item->narasi)) !!}</td>
+                            <td class="d-none d-md-table-cell">{!! nl2br(e($item->narasi_teks)) !!}</td>
                             <td class="d-none d-md-table-cell">{{ $item->pegawaiSatu ? $item->pegawaiSatu->nama_pegawai : '-' }}
                             </td>
                             <td class="d-none d-md-table-cell">{{ $item->pegawaiDua ? $item->pegawaiDua->nama_pegawai : '-' }}
