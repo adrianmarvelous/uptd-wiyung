@@ -84,7 +84,7 @@
         <td>: {{ optional($data->pegawaiDua)->nama_pegawai ?? '-' }}</td>
     </tr> --}}
     </table>
-    <h2 style="text-align: center;text-decoration:underline;font-weight:bold">BERITA PEMERIKSAAN</h2>
+    <h2 style="text-align: center;text-decoration:underline;font-weight:bold">BERITA ACARA PEMERIKSAAN</h2>
     <div>
         <p style="text-indent: 30px">Pada hari ini {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('l') }}
             tanggal {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('j F Y') }} telah diadakan pemeriksaan ditempat,
@@ -107,7 +107,17 @@
         </tr>
         <tr>
             <td style="text-align: center; vertical-align: top;">
-                <img src="{{ public_path($data->ttd_wajib_pajak) }}" width="200">
+                @php
+                    // Nilai kolom disimpan sebagai "storage/ttd_wajib_pajak/xxx.png" (disk public),
+                    // jadi di-resolve langsung ke storage_path() supaya tidak bergantung pada
+                    // symlink public/storage — dan tidak error saat tanda tangan masih kosong.
+                    $ttdPath = $data->ttd_wajib_pajak
+                        ? storage_path('app/public/' . preg_replace('#^/?storage/#', '', $data->ttd_wajib_pajak))
+                        : null;
+                @endphp
+                @if ($ttdPath && is_file($ttdPath))
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents($ttdPath)) }}" width="200">
+                @endif
             </td>
             <td style="vertical-align: top;">
                 <table width="100%">
