@@ -32,22 +32,26 @@ Route::middleware(['auth', 'verified'])->prefix('/')->group(function () {
         [BeritaAcaraController::class, 'approval_wajib_pajak']
     );
     Route::post('/berita_acara/store', [BeritaAcaraController::class, 'store'])->name('berita_acara.store');
-    Route::get('/berita_acara/edit/{id}', [BeritaAcaraController::class, 'edit'])->name('berita_acara.edit');
+    // {kode} = ID yang sudah disandikan lewat App\Support\UrlId (bukan ID mentah).
+    Route::get('/berita_acara/edit/{kode}', [BeritaAcaraController::class, 'edit'])->name('berita_acara.edit');
     // Route::post('/berita_acara/update_approval_wajib_pajak', [BeritaAcaraController::class, 'update_approval_wajib_pajak'])->name('berita_acara.update_approval_wajib_pajak');
     Route::post('/berita_acara/update', [BeritaAcaraController::class, 'update'])->name('berita_acara.update');
-    Route::get('/berita_acara/ba_pdf/{id}', [BeritaAcaraController::class, 'ba_pdf'])->name('berita_acara.ba_pdf');
+    // {kode} = ID yang sudah disandikan lewat App\Support\UrlId (bukan ID mentah).
+    Route::get('/berita_acara/ba_pdf/{kode}', [BeritaAcaraController::class, 'ba_pdf'])->name('berita_acara.ba_pdf');
     // Route::post('/readCsv', [BeritaAcaraController::class, 'readCsv'])->name('read.csv');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/berita_acara_petugas',[BeritaAcaraController::class, 'petugas'])->name('berita_acara.petugas');
         Route::post('/change_char',[BeritaAcaraController::class, 'change_char'])->name('berita_acara.change_char');
-        Route::get('/berita_acara_petugas/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_petugas'])->name('berita_acara.petugas.detail');
+        // {kode} = ID tersandikan (App\Support\UrlId); {bulan}/{tahun} tetap angka biasa.
+        Route::get('/berita_acara_petugas/detail/{kode}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_petugas'])->name('berita_acara.petugas.detail');
         Route::get('/berita_acara_wp/{jenis}',[BeritaAcaraController::class, 'wp'])->name('berita_acara.wp');
-        Route::get('/berita_acara_wp/detail/{id}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_pw'])->name('berita_acara.wp.detail');
+        // {kode} = ID tersandikan (App\Support\UrlId); {bulan}/{tahun} tetap angka biasa.
+        Route::get('/berita_acara_wp/detail/{kode}/{bulan}/{tahun}',[BeritaAcaraController::class, 'detail_pw'])->name('berita_acara.wp.detail');
     });
 });
 

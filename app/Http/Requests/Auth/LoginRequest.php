@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\ReCaptcha;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,24 @@ class LoginRequest extends FormRequest
         return [
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
+            // "required" wajib ada: tanpa itu, request yang tidak mengirim field
+            // g-recaptcha-response sama sekali akan melewati validasi reCAPTCHA.
+            'g-recaptcha-response' => [
+                filled(config('services.recaptcha.secret_key')) ? 'required' : 'nullable',
+                new ReCaptcha(),
+            ],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'g-recaptcha-response.required' => 'Silakan centang kotak "Saya bukan robot" terlebih dahulu.',
         ];
     }
 

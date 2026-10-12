@@ -33,7 +33,7 @@
                             <td>{{ $item->created_at->format('d-M-Y') }}</td>
                             <td>{{ $item->pegawaiSatu->nama_pegawai }}</td>
                             <td>{{ $item->pegawaiDua ? $item->pegawaiDua->nama_pegawai : '-' }}</td>
-                            <td><a class="btn btn-danger" href="{{ $item->file_berita_acara ? asset('storage/' . $item->file_berita_acara) : route('berita_acara.ba_pdf', $item->id) }}"><i class="bi bi-file-pdf"></i></a></td>
+                            <td><a class="btn btn-danger" href="{{ $item->file_berita_acara ? asset('storage/' . $item->file_berita_acara) : route('berita_acara.ba_pdf', \App\Support\UrlId::encode($item->id)) }}"><i class="bi bi-file-pdf"></i></a></td>
                             {{-- <td>{{ $item->wajibPajak->jumlah_berita_acara }}</td>
                             <td><a class="btn btn-primary" href="{{ route('berita_acara.detail', $item->id) }}">Detail</a></td> --}}
                         </tr>

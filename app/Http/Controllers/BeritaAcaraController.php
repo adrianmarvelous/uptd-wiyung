@@ -7,6 +7,7 @@ use App\Models\WajibPajak;
 use App\Rules\SafeInput;
 use App\Models\Pegawai;
 use App\Models\BeritaAcara;
+use App\Support\UrlId;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -172,8 +173,10 @@ class BeritaAcaraController extends Controller
         return view('berita_acara.approval_wajib_pajak', compact('nop', 'nama', 'alamat', 'nama_responden', 'telp', 'narasi', 'pegawai1', 'pegawai2', 'berita'));
     }
 
-    public function edit($id)
+    public function edit($kode)
     {
+        $id = $this->idDariKode($kode);
+
         $berita = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])->findOrFail($id);
 
         $pegawai = Pegawai::orderBy('nama_pegawai', 'asc')->get();
@@ -288,8 +291,22 @@ class BeritaAcaraController extends Controller
         }
     }
 
-    public function ba_pdf($id)
+    /**
+     * Terjemahkan {kode} pada URL menjadi ID numerik.
+     * Token kosong / diubah / tidak valid langsung dijawab 404.
+     */
+    private function idDariKode(string $kode): int
     {
+        try {
+            return UrlId::decode($kode);
+        } catch (\InvalidArgumentException) {
+            abort(404);
+        }
+    }
+
+    public function ba_pdf(string $kode)
+    {
+        $id = $this->idDariKode($kode);
 
         Carbon::setLocale('id');
         $data = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])
@@ -511,8 +528,9 @@ class BeritaAcaraController extends Controller
         return view('admin.petugas.index', compact('pegawai', 'bulan', 'tahun'));
     }
 
-    public function detail_petugas($id, $bulan, $tahun)
+    public function detail_petugas($kode, $bulan, $tahun)
     {
+        $id = $this->idDariKode($kode);
         $bulan = (int) $bulan;
         $tahun = (int) $tahun;
         $petugas = Pegawai::findOrFail($id);
@@ -555,8 +573,10 @@ class BeritaAcaraController extends Controller
 
         return view('admin.wp.index', compact('data', 'jenis', 'bulan', 'tahun'));
     }
-    public function detail_pw($id,$bulan,$tahun)
+    public function detail_pw($kode, $bulan, $tahun)
     {
+        $id = $this->idDariKode($kode);
+
         $wp = WajibPajak::findOrFail($id);
         $data = BeritaAcara::with(['wajibPajak', 'pegawaiSatu', 'pegawaiDua'])
                                     ->where('id_wajib_pajak',$id)
