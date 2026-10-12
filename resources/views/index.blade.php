@@ -570,11 +570,11 @@
 
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
-                                    aria-expanded="false">
-                                    {{-- <div class="avatar-sm">
-                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}"
-                                            alt="..." class="avatar-img rounded-circle" />
-                                    </div> --}}
+                                    aria-expanded="false" aria-label="Menu pengguna UPTB Wiyung">
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
+                                        style="width: 40px; height: 40px;" aria-hidden="true">
+                                        <i class="fas fa-user"></i>
+                                    </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
                                         <span class="fw-bold">UPTB Wiyung</span>

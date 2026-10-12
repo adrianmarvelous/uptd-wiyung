@@ -244,14 +244,16 @@
                                                 target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>
                                         </li>
                                         <li><a class="dropdown-item" href="{{ route('berita_acara.edit', \App\Support\UrlId::encode($item->id)) }}"> <i class="bi bi-pencil"></i> Edit</a></li>
-                                        <li>
-                                            <form method="POST" action="#">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="dropdown-item text-danger"><i class="bi bi-trash"></i>
-                                                    Hapus</button>
-                                            </form>
-                                        </li>
+                                        @if (auth()->user()->role === 'admin')
+                                            <li>
+                                                <form method="POST" action="#">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="dropdown-item text-danger"><i class="bi bi-trash"></i>
+                                                        Hapus</button>
+                                                </form>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </td>
