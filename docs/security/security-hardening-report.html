@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <title>Laporan Penguatan Keamanan - UPTD Wiyung</title>
+    <style>
+        body {
+            color: #1d2939;
+            font-family: dejavusans, sans-serif;
+            font-size: 9.5pt;
+            line-height: 1.48;
+        }
+        h1, h2, h3 { color: #123b5d; }
+        h1 { font-size: 25pt; line-height: 1.15; margin: 0 0 8mm; }
+        h2 {
+            border-bottom: 1px solid #b8c9d8;
+            font-size: 15pt;
+            margin: 9mm 0 3mm;
+            padding-bottom: 2mm;
+        }
+        h3 { font-size: 11pt; margin: 5mm 0 1.5mm; }
+        p { margin: 1.5mm 0 3mm; }
+        ul, ol { margin: 1mm 0 3mm; padding-left: 6mm; }
+        li { margin: 1mm 0; }
+        .cover {
+            border-left: 5px solid #087e8b;
+            margin: 21mm 0 8mm;
+            padding: 3mm 0 3mm 7mm;
+        }
+        .eyebrow {
+            color: #087e8b;
+            font-size: 9pt;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .subtitle { color: #526477; font-size: 13pt; }
+        .meta { color: #526477; font-size: 9pt; }
+        .notice {
+            background-color: #fff5dc;
+            border: 1px solid #f0d48b;
+            padding: 3mm;
+        }
+        .critical {
+            background-color: #fff0ef;
+            border-left: 3px solid #c0392b;
+            padding: 2mm 3mm;
+        }
+        .finding {
+            border: 1px solid #ccd7e0;
+            margin: 4mm 0;
+            padding: 3mm;
+        }
+        .severity {
+            color: #a93226;
+            font-weight: bold;
+        }
+        .ref { color: #526477; font-size: 8.5pt; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td {
+            border: 1px solid #ccd7e0;
+            padding: 2mm;
+            text-align: left;
+            vertical-align: top;
+        }
+        th { background-color: #eaf1f6; color: #123b5d; }
+        .check td:first-child { width: 7mm; }
+        .small { color: #526477; font-size: 8.5pt; }
+        .page-break { page-break-before: always; }
+    </style>
+</head>
+<body>
+    <div class="cover">
+        <div class="eyebrow">Laporan internal · Data sensitif</div>
+        <h1>Penguatan Keamanan<br>UPTD Wiyung</h1>
+        <p class="subtitle">Tinjauan risiko aplikasi dan panduan mitigasi prioritas</p>
+        <p class="meta">Tanggal: 12 Oktober 2026<br>
+            Cakupan: tinjauan statis kode aplikasi, konfigurasi, dan panduan deployment</p>
+    </div>
+
+    <p class="notice"><strong>Perhatian:</strong> dokumen ini memuat informasi keamanan internal.
+        Bagikan hanya kepada personel yang berwenang. Hindari mengirimkannya bersama data
+        wajib pajak, kredensial, atau berkas operasional.</p>
+
+    <h2>Ringkasan eksekutif</h2>
+    <p>Tinjauan menemukan tiga risiko <strong>tinggi</strong> yang dapat membuka data atau
+        tindakan pengguna kepada pihak yang tidak berwenang: pendaftaran mandiri yang memberi
+        akses ke fungsi data, dokumen dan tanda tangan yang disajikan dari storage publik, serta
+        kemungkinan stored XSS pada autocomplete wajib pajak.</p>
+    <p>Rekomendasi paling mendesak adalah menutup pendaftaran publik, memastikan otorisasi
+        server-side untuk setiap operasi data, memindahkan dokumen ke penyimpanan privat, dan
+        mengganti interpolasi HTML autocomplete dengan manipulasi DOM yang aman. Tinjauan ini
+        bersifat statis; konfigurasi server produksi dan nilai environment aktual belum
+        diverifikasi.</p>
+    <p class="critical"><strong>Urutan tindakan:</strong> batasi akses akun → lindungi dokumen
+        yang sudah tersimpan → hilangkan jalur XSS → verifikasi konfigurasi deployment →
+        uji ulang dan pantau.</p>
+
+    <h2>Temuan keamanan</h2>
+    <div class="finding">
+        <h3>1. Pendaftaran publik dapat membuka akses ke data Berita Acara</h3>
+        <p><span class="severity">HIGH · Confidence 10/10</span></p>
+        <p class="ref">Bukti: <code>routes/auth.php:14-18</code>;
+            <code>app/Http/Controllers/Auth/RegisteredUserController.php:30-48</code>;
+            <code>app/Models/User.php:5-10</code>;
+            <code>routes/web.php:9,47</code>.</p>
+        <p><strong>Risiko:</strong> endpoint pendaftaran terbuka dan pengguna baru langsung
+            login. Route data utama memakai middleware <code>auth</code> dan
+            <code>verified</code>, tetapi model pengguna tidak menerapkan
+            <code>MustVerifyEmail</code>; karena itu, middleware <code>verified</code> tidak
+            menjadi batas verifikasi yang efektif. Route utama tidak seluruhnya dibatasi ke
+            admin. Akun yang dibuat sendiri berpotensi membaca data wajib pajak dan Berita
+            Acara, termasuk keluaran PDF.</p>
+        <p><strong>Perbaikan:</strong></p>
+        <ul>
+            <li>Nonaktifkan pendaftaran publik di produksi. Buat akun melalui provisioning atau
+                undangan yang disetujui administrator.</li>
+            <li>Terapkan policy/gate atau middleware role yang tepat pada setiap route baca,
+                buat, ubah, hapus, ekspor, dan unduh—bukan hanya pada halaman admin.</li>
+            <li>Pastikan kontrol berbasis identitas/role diuji di server; jangan mengandalkan
+                penyembunyian tombol atau nilai <code>verified</code> tanpa verifikasi email
+                yang sesungguhnya.</li>
+            <li>Tinjau akun yang sudah terdaftar dan cabut akun yang tidak berwenang; rotasi
+                sesi bila ada indikasi penyalahgunaan.</li>
+        </ul>
+    </div>
+
+    <div class="finding">
+        <h3>2. Dokumen dan tanda tangan tersedia melalui storage publik</h3>
+        <p><span class="severity">HIGH · Confidence 10/10</span></p>
+        <p class="ref">Bukti: <code>app/Http/Controllers/BeritaAcaraController.php:245-258,456-507</code>;
+            <code>config/filesystems.php:41-45,76-78</code>;
+            <code>resources/views/berita_acara/index.blade.php:243-244</code>;
+            <code>docs/deploy/README.md:30-35</code>.</p>
+        <p><strong>Risiko:</strong> unggahan Berita Acara dan gambar tanda tangan disimpan pada
+            disk publik dan dipetakan ke webroot. Tautan langsung ke berkas dapat dilayani web
+            server tanpa melewati autentikasi dan otorisasi aplikasi. Berkas berpotensi
+            memuat identitas dan informasi pajak.</p>
+        <p><strong>Perbaikan:</strong></p>
+        <ul>
+            <li>Pindahkan berkas ke disk privat di luar webroot. Periksa konfigurasi web server
+                agar direktori penyimpanan tidak dapat diakses langsung.</li>
+            <li>Sajikan unduhan melalui controller yang memeriksa autentikasi, role/policy,
+                keterkaitan pengguna dengan data, serta izin untuk berkas yang diminta.</li>
+            <li>Migrasikan berkas lama, audit permission dan backup, serta cabut atau hentikan
+                URL publik lama. Jangan hanya menghapus tautan dari antarmuka.</li>
+            <li>Uji bahwa permintaan tanpa login dan pengguna tanpa hak mendapat penolakan,
+                sedangkan pengguna berwenang tetap dapat mengunduh.</li>
+        </ul>
+    </div>
+
+    <div class="finding">
+        <h3>3. Stored XSS melalui hasil autocomplete wajib pajak</h3>
+        <p><span class="severity">HIGH · Confidence 9/10</span></p>
+        <p class="ref">Bukti: <code>resources/views/berita_acara/index.blade.php:288-301</code>;
+            <code>resources/views/berita_acara/create.blade.php:295-310</code>;
+            <code>app/Http/Controllers/BeritaAcaraController.php:78-106,212-215,287</code>;
+            <code>app/Rules/SafeInput.php:17-20</code>.</p>
+        <p><strong>Risiko:</strong> hasil pencarian dari basis data disisipkan mentah ke HTML
+            dengan <code>insertAdjacentHTML</code>. Field wajib pajak berasal dari input
+            pengguna; validasi berupa blacklist substring tidak menutup seluruh bentuk markup
+            dan event handler. Markup tersimpan berpotensi menjalankan JavaScript pada browser
+            staf yang melihat hasil autocomplete.</p>
+        <p><strong>Perbaikan:</strong></p>
+        <ul>
+            <li>Buat elemen DOM secara eksplisit. Masukkan nilai tak tepercaya dengan
+                <code>textContent</code>, dan setel atribut melalui properti DOM yang sesuai.</li>
+            <li>Hapus penggunaan blacklist regex sebagai kontrol utama XSS. Lakukan encoding
+                sesuai konteks pada output; jika HTML memang diperlukan, gunakan sanitizer
+                allowlist yang terpelihara.</li>
+            <li>Tambahkan pengujian regresi untuk nilai dengan tag, atribut event, tanda kutip,
+                dan karakter khusus; pastikan nilai tampil sebagai teks dan tidak dieksekusi.</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+    <h2>Rencana mitigasi terprioritas</h2>
+    <table>
+        <thead>
+            <tr><th>Prioritas</th><th>Tindakan</th><th>Kriteria selesai</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>P0 · segera</strong></td>
+                <td>Matikan pendaftaran publik; tinjau daftar pengguna dan batasi akses route
+                    sensitif dengan policy/role server-side.</td>
+                <td>Pengunjung tidak bisa membuat akun. Setiap operasi data ditolak secara
+                    default kecuali pengguna yang berwenang.</td>
+            </tr>
+            <tr>
+                <td><strong>P0 · segera</strong></td>
+                <td>Pindahkan dokumen dan tanda tangan ke disk privat; tambahkan unduhan
+                    terotorisasi; migrasikan berkas yang ada.</td>
+                <td>URL statis lama tidak lagi mengambil dokumen. Akses tanpa hak ditolak dan
+                    akses sah tercatat.</td>
+            </tr>
+            <tr>
+                <td><strong>P0 · segera</strong></td>
+                <td>Hilangkan <code>insertAdjacentHTML</code> untuk data autocomplete yang
+                    tidak tepercaya; gunakan API DOM aman.</td>
+                <td>Payload uji tampil sebagai teks; tidak menjalankan skrip atau handler.</td>
+            </tr>
+            <tr>
+                <td><strong>P1 · sebelum deploy</strong></td>
+                <td>Pastikan <code>APP_DEBUG=false</code>, HTTPS wajib, dan
+                    <code>SESSION_SECURE_COOKIE=true</code> pada konfigurasi produksi aktual.</td>
+                <td>Konfigurasi efektif diverifikasi di lingkungan produksi; cookie sesi hanya
+                    dikirim melalui HTTPS.</td>
+            </tr>
+            <tr>
+                <td><strong>P1 · sebelum deploy</strong></td>
+                <td>Pastikan seeder/factory akun contoh tidak dijalankan di produksi dan
+                    kredensial awal tidak dipakai ulang.</td>
+                <td>Akun contoh tidak ada; akun admin dibuat melalui prosedur aman dan memiliki
+                    kata sandi unik.</td>
+            </tr>
+            <tr>
+                <td><strong>P2 · berkelanjutan</strong></td>
+                <td>Terapkan pemeriksaan dependency berkala, least privilege untuk akun
+                    database, kontrol akses dan enkripsi backup, serta prosedur respons insiden.</td>
+                <td>Jadwal pemindaian dan pemulihan terdokumentasi; uji restore dilakukan tanpa
+                    mengekspos data sensitif.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Gambaran keamanan dan batas tinjauan</h2>
+    <ul>
+        <li>Aplikasi menggunakan Laravel 12/PHP 8.2, Blade, dan Eloquent. Route operasional
+            memakai autentikasi, tetapi pengamanan role/policy belum konsisten di seluruh
+            permukaan data.</li>
+        <li>Session memakai driver database; konfigurasi cookie mencakup HttpOnly dan
+            SameSite=Lax. Pengaktifan Secure bergantung pada environment dan harus diperiksa
+            pada server yang berjalan.</li>
+        <li>PDF aplikasi dibuat melalui mPDF; risiko storage publik terutama mengenai dokumen
+            unggahan dan gambar tanda tangan yang di-link langsung.</li>
+        <li>Panduan deployment meminta <code>APP_ENV=production</code> dan
+            <code>APP_DEBUG=false</code>, tetapi source code tidak membuktikan konfigurasi
+            aktual di produksi. Jangan menaruh nilai rahasia di laporan atau log.</li>
+        <li>Manifest dan lockfile dependency tersedia. Pemindaian advisory berbasis jaringan
+            tidak dilakukan; laporan ini tidak menyatakan status CVE dependency.</li>
+    </ul>
+    <p class="small">Tinjauan ini bersifat statis dan terbatas pada bukti dalam source,
+        konfigurasi yang tersedia, serta panduan deployment. Tinjauan tidak membuktikan status
+        sistem produksi, tidak mencakup uji penetrasi runtime, dan tidak menggantikan pemeriksaan
+        konfigurasi server, akses database, backup, atau kontrol organisasi.</p>
+
+    <h2>Checklist verifikasi setelah perbaikan</h2>
+    <table class="check">
+        <tbody>
+            <tr><td>[ ]</td><td>Registrasi publik dimatikan di produksi; proses provisioning
+                akun memiliki persetujuan dan audit.</td></tr>
+            <tr><td>[ ]</td><td>Uji akses setiap role terhadap route baca, ubah, hapus, ekspor,
+                dan unduh; uji penolakan tanpa login dan tanpa izin.</td></tr>
+            <tr><td>[ ]</td><td>Dokumen privat tidak bisa diambil lewat URL statis atau oleh
+                pengguna tanpa hak; akses sah tetap berfungsi.</td></tr>
+            <tr><td>[ ]</td><td>Uji payload XSS pada seluruh field yang muncul di autocomplete
+                dan halaman terkait; verifikasi tidak ada eksekusi.</td></tr>
+            <tr><td>[ ]</td><td>Verifikasi HTTPS, <code>APP_DEBUG=false</code>,
+                <code>SESSION_SECURE_COOKIE=true</code>, serta permission file di server
+                produksi.</td></tr>
+            <tr><td>[ ]</td><td>Tinjau akun lama, file publik lama, log akses, backup, dan
+                indikator kemungkinan akses tidak sah.</td></tr>
+            <tr><td>[ ]</td><td>Jalankan tes regresi aplikasi dan review independen setelah
+                mitigasi; dokumentasikan hasil dan pemilik tindakan.</td></tr>
+        </tbody>
+    </table>
+
+    <p class="small">Akhir laporan · Simpan dan distribusikan sesuai kebijakan klasifikasi
+        informasi organisasi.</p>
+</body>
+</html>

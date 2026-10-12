@@ -386,7 +386,7 @@ class BeritaAcaraController extends Controller
 
         // Optional header / footer
         $mpdf->SetHeader('BERITA ACARA||{PAGENO}');
-        $mpdf->SetFooter('{DATE j-m-Y}|BKPSDM Kota Surabaya|{PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|Bapenda Kota Surabaya|{PAGENO}');
 
         // Write HTML ke PDF
         $mpdf->WriteHTML($html);

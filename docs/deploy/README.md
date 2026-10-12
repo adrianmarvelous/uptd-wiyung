@@ -84,6 +84,11 @@ Isi `public_html/.htaccess`:
 </IfModule>
 ```
 
+Folder repository `laravel_app` harus tetap berada di luar `public_html`. Folder
+`docs/security` juga memiliki aturan Apache yang menolak semua permintaan HTTP langsung.
+Jangan salin folder laporan keamanan ke dalam `public_html`; aturan `.htaccess` hanya
+berlaku jika Apache mengizinkan override direktori.
+
 ## 7. Dokumentasi
 - Panduan pengguna (PDF): `docs/Panduan-Pengguna-Berita-Acara-UPTB-Wiyung.pdf`
 - Buat ulang PDF: `C:\xampp\php\php.exe laravel_app\docs\build-guide.php`
